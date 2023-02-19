@@ -25,3 +25,8 @@ Por otra parte las vistas desarrolladas se encuentran en resources>js>Pages
 Al ingresar a la URL que despliega los productos, dentro del router se realiza la petición de la vista al controllador, quien a su vez consulta los modelos para brindar la información necesaria en caso de estar buscando productos filtrados.
 
 Las válidaciones de entradas del usuario se realizan a través de reglas específicadas en los modelos creados.
+
+#### Implementación de expresiones regulares 
+
+Sirven para evitar inyección de código en el buscador, al proporcionar caracteres diferentes a letras, espacios y números, estos son ignorados.
+![image](https://user-images.githubusercontent.com/72422927/219910282-16f68cbc-5cfa-4380-a919-43e5fe84081b.png)
