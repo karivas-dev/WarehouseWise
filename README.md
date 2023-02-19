@@ -22,6 +22,6 @@ De igual forma los controlladores se encuentra en app>Http>Controllers
 Por otra parte las vistas desarrolladas se encuentran en resources>js>Pages
 ![image](https://user-images.githubusercontent.com/72422927/219905688-2215014c-d1dd-4f2b-82ef-3358a113af15.png)
 
-Al ingresar a la URL que despliega los productos, dentro del router se realiza la petición de la vista al controllador, quien a su vez consulta los modelos para brindar la información necesaria.
+Al ingresar a la URL que despliega los productos, dentro del router se realiza la petición de la vista al controllador, quien a su vez consulta los modelos para brindar la información necesaria en caso de estar buscando productos filtrados.
 
 Las válidaciones de entradas del usuario se realizan a través de reglas específicadas en los modelos creados.
