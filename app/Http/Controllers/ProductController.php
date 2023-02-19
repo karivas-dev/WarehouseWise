@@ -15,8 +15,11 @@ class ProductController extends Controller
      */
     public function index()
     {
+        $search = request("search");
+
         return Inertia::render('Products/Show', [
-            'products' => Product::query()->when(request('search') ?? false, function ($query, $search) {
+            'products' => Product::query()->when($search ?? false, function ($query, $search) {
+                $search = preg_replace("/([^A-Za-z0-9\s])+/i", "", $search);
                 $query->where('name', 'LIKE', "%$search%");
             })->paginate(15)->withQueryString(),
             'filters' => request()->only(['search']),
