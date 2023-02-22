@@ -24,7 +24,8 @@ defineProps({
             >
 
             <template v-else>
-                <Link :href="route('login')" class="text-sm text-gray-700 dark:text-gray-500 underline">Log in</Link>
+                <Link :href="route('products.index')" class="text-sm text-gray-400 dark:text-gray-300 underline">Products List</Link>
+                <Link :href="route('login')" class="ml-4 text-sm text-gray-700 dark:text-gray-500 underline">Log in</Link>
 
                 <Link
                     v-if="canRegister"
