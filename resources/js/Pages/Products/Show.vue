@@ -1,15 +1,16 @@
 <script setup>
 import Paginator from "@/Components/Paginator.vue";
 import {ref, watch} from "vue";
-import {router} from "@inertiajs/vue3";
+import {Link, router} from "@inertiajs/vue3";
 import {throttle} from "lodash";
 
-const props = defineProps(['products', 'filters']);
+const props = defineProps(['products', 'warehouse','filters', 'links']);
 const search = ref(props.filters.search);
+const all = ref(props.filters.all === "1");
 
 watch(search, throttle(function (value) {
     console.log(value);
-    router.get('/products', { search: value }, {
+    router.get('/products', { search: value, all: all }, {
         preserveState: true,
         preserveScroll: true,
     });
@@ -20,6 +21,9 @@ watch(search, throttle(function (value) {
     <div class="w-100 px-10 flex flex-col justify-center">
         <div class="w-100 my-8 flex justify-between">
             <span class="text-5xl font-bold">Products Table</span>
+            <Link :href="route('products.index', {search: value, all: !all})" type="button" class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 mr-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800">
+                {{ all ? "mostrar warehouse" : "mostrar todos" }}
+            </Link>
 
             <form class="flex items-center">
                 <label for="simple-search" class="sr-only">Search</label>
@@ -46,13 +50,13 @@ watch(search, throttle(function (value) {
                     <th scope="col" class="px-6 py-3">
                         Unit Price
                     </th>
-                    <!--<th scope="col" class="px-6 py-3">
+                    <th scope="col" class="px-6 py-3">
                         <span class="sr-only">Edit</span>
-                    </th>-->
+                    </th>
                 </tr>
                 </thead>
                 <tbody>
-                <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600" v-for="product in products.data" :key="products.id">
+                <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600" v-for="product in products" :key="products.id">
                     <th scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
                         {{ product.name }}
                     </th>
@@ -62,9 +66,9 @@ watch(search, throttle(function (value) {
                     <td class="px-6 py-4">
                         {{ product.unit_price }}
                     </td>
-                    <!--<td class="px-6 py-4 text-right">
-                        <a href="#" class="font-medium text-blue-600 dark:text-blue-500 hover:underline">Edit</a>
-                    </td>-->
+                    <td class="px-6 py-4 text-right">
+                        <Link :href="route('products.show', {id:product.id})" class="font-medium text-blue-600 dark:text-blue-500 hover:underline">Edit</Link>
+                    </td>
                 </tr>
                 </tbody>
             </table>
@@ -72,6 +76,6 @@ watch(search, throttle(function (value) {
 
 
 
-        <Paginator :links="products.links"/>
+        <Paginator :links="links"/>
     </div>
 </template>

@@ -26,7 +26,9 @@ class ProductSeeder extends Seeder
             }
 
             foreach ($warehouses->random(rand(1, $warehouses->count())) as $warehouse) {
-                $product->warehouses()->attach($warehouse);
+                $product->warehouses()->attach($warehouse, [
+                    'quantity'=>random_int(0,50),
+                ]);
             }
         });
     }

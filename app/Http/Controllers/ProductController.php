@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Product;
 use App\Models\User;
+use Illuminate\Support\Facades\Auth;
 use Inertia\Inertia;
 
 class ProductController extends Controller
@@ -17,12 +18,19 @@ class ProductController extends Controller
     {
         $search = request("search");
 
+        $products = filter_var(request("all"), FILTER_VALIDATE_BOOLEAN) ? Product::query() : Auth::user()->warehouse->products();
+        $products = $products->when($search ?? false, function($query, $search){
+            $search = preg_replace("/([^A-Za-z0-9\s])+/i", "", $search);
+            $query->where('name', 'LIKE', "%$search%");
+        })->with('warehouses')->paginate(15)->withQueryString();
+
         return Inertia::render('Products/Show', [
-            'products' => Product::query()->when($search ?? false, function ($query, $search) {
-                $search = preg_replace("/([^A-Za-z0-9\s])+/i", "", $search);
-                $query->where('name', 'LIKE', "%$search%");
-            })->paginate(15)->withQueryString(),
-            'filters' => request()->only(['search']),
+            'warehouse' =>Auth::user()->warehouse,
+            'links'=> $products->toArray()['links'],
+            'products' => $products->map(function($product){
+                return $product->append('quantity');
+            }),
+            'filters' => request()->only(['search', 'all']),
         ]);
     }
 
@@ -51,11 +59,15 @@ class ProductController extends Controller
      * Display the specified resource.
      *
      * @param  \App\Models\Product  $product
-     * @return \Illuminate\Http\Response
+     * @return \Inertia\Response
      */
     public function show(Product $product)
     {
-        //
+        return Inertia::render('Products/Show2', [
+            'product' => $product->makeVisible('description')->append('quantity')->load('warehouses'),
+            'available' => $product->warehouses->where('id', Auth::user()->warehouse->id)->where('pivot.quantity', '>', 0)->first()!=null,
+            'warehouses' => $product->warehouses->where('id', '!=' ,Auth::user()->warehouse->id)->where('pivot.quantity', '>', 0),
+        ]);
     }
 
     /**

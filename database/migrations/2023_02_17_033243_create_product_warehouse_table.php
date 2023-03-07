@@ -16,6 +16,8 @@ return new class extends Migration
         Schema::create('product_warehouse', function (Blueprint $table) {
             $table->foreignIdFor(\App\Models\Product::class)->constrained()->cascadeOnUpdate()->cascadeOnDelete();
             $table->foreignIdFor(\App\Models\Warehouse::class)->constrained()->cascadeOnUpdate()->cascadeOnDelete();
+            $table->primary(['product_id', 'warehouse_id']);
+            $table->unsignedBigInteger('quantity');
         });
     }
 
