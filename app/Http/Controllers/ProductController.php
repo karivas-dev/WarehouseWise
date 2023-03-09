@@ -2,8 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Category;
 use App\Models\Product;
-use App\Models\User;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Inertia\Inertia;
 
@@ -37,11 +38,13 @@ class ProductController extends Controller
     /**
      * Show the form for creating a new resource.
      *
-     * @return \Illuminate\Http\Response
+     * @return \Inertia\Response
      */
     public function create()
     {
-        //
+        return Inertia::render('Products/CreateEdit', [
+            'categories'=>Category::all(),
+        ]);
     }
 
     /**
@@ -52,7 +55,31 @@ class ProductController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $product_attributes = $request->validate([
+            'name'=> 'required|string|max:255',
+            'description'=>'required|string|max:5000',
+            'unit_price'=>'required|decimal:2|gt:0',
+        ]);
+
+        $categories_attributes = $request->validate([
+            'categories'=>'required|array',
+            'categories.*'=>'numeric|gt:0|decimal:0|max:255',
+        ]);
+
+        $quantity_attribute = $request->validate([
+            'quantity'=>'required|decimal:0|gte:0',
+        ]);
+
+        $product = Product::create($product_attributes);
+
+        $product->categories()->attach($categories_attributes['categories']);
+
+        $product->warehouses()->attach(Auth::user()->warehouse->id, $quantity_attribute);
+
+        return back()->with([
+            'type'=>'success',
+            'message'=>'Product created successfully',
+        ]);
     }
 
     /**
@@ -78,7 +105,11 @@ class ProductController extends Controller
      */
     public function edit(Product $product)
     {
-        //
+        return Inertia::render('Products/CreateEdit', [
+            'product'=>$product->makeVisible('description')->append('quantity'),
+            'selected_categories'=>$product->categories()->select('id')->get()->pluck('id'),
+            'categories'=>Category::all(),
+        ]);
     }
 
     /**
@@ -90,7 +121,40 @@ class ProductController extends Controller
      */
     public function update(Request $request, Product $product)
     {
-        //
+
+        $product_attributes = $request->validate([
+            'name'=> 'required|string|max:255',
+            'description'=>'required|string|max:5000',
+            'unit_price'=>'required|decimal:2|gt:0',
+        ]);
+
+        $categories_attributes = $request->validate([
+            'categories'=>'required|array',
+            'categories.*'=>'numeric|gt:0|decimal:0|max:255',
+        ]);
+
+        $quantity_attribute = $request->validate([
+            'quantity'=>'required|decimal:0|gte:0',
+        ]);
+
+        $product->fill($product_attributes);
+        $product->save();
+
+        $product->categories()->toggle($categories_attributes['categories']);
+
+        if($product->warehouses->where('id', Auth::user()->warehouse->id)->first()!=null)
+        {
+            $product->warehouses()->updateExistingPivot(Auth::user()->warehouse->id, $quantity_attribute);
+        }
+        else
+        {
+            $product->warehouses()->attach(Auth::user()->warehouse->id, $quantity_attribute);
+        }
+
+        return back()->with([
+            'type'=>'success',
+            'message'=>'Product updated',
+        ]);
     }
 
     /**
