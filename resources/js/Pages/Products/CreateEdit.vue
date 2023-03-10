@@ -1,15 +1,14 @@
 <script setup>
 import { useForm, usePage } from '@inertiajs/vue3';
 
-
 const props = defineProps(['categories', 'product', 'selected_categories']);
 
 const form = useForm({
-    name:'',
-    description:'',
-    unit_price:0.00,
-    categories:[],
-    quantity:1,
+    name:props.product?.name ?? '',
+    description:props.product?.description ?? '',
+    unit_price:props.product?.unit_price ?? 0.00,
+    categories:props.selected_categories ?? [],
+    quantity:props.product?.quantity ?? 0,
 });
 
 const store = ()=>{
@@ -29,14 +28,20 @@ const update = ()=> {
     });
 };
 
-if (props.product != null)
-{
-    form.name = props.product.name;
-    form.description = props.product.description;
-    form.unit_price = props.product.unit_price;
-    form.categories = props.selected_categories;
-    form.quantity = props.product.quantity ?? 0;
-    console.log(props.selected_categories);
+const destroy = ()=> {
+    form.delete(route('products.destroy', {id:props.product.id}), {
+        onSuccess:()=>{
+            alert(usePage().props.flash.message);
+        }
+    });
+}
+
+const remove = ()=> {
+    form.delete(route('products.remove', {id:props.product.id}), {
+        onSuccess:()=>{
+            alert(usePage().props.flash.message);
+        }
+    });
 }
 
 </script>
@@ -56,4 +61,6 @@ if (props.product != null)
 
         <input type="submit">
     </form>
+    <button @click="destroy" v-if="product!=null">Global Delete</button>
+    <button @click="remove" v-if="product!=null">Delete From This Warehouse</button>
 </template>

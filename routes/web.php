@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\ProductController;
 use App\Http\Controllers\ProfileController;
 use App\Models\Product;
 use Illuminate\Foundation\Application;
@@ -37,7 +38,8 @@ Route::middleware('auth')->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
 
-Route::resource('products', \App\Http\Controllers\ProductController::class)->middleware(['auth']);
+Route::resource('products', ProductController::class)->middleware(['auth']);
+Route::delete('products/{product}/remove', [ProductController::class, 'remove'])->middleware(['auth'])->name('products.remove');
 Route::get('show_warehouse', function(){
     return Auth::user()->warehouse->products;
 })->middleware("auth");

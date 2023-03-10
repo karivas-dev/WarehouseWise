@@ -144,6 +144,23 @@ class ProductController extends Controller
      */
     public function destroy(Product $product)
     {
-        //
+        $product->warehouses()->sync([]);
+        $product->delete();
+        return back()->with([
+            'type' => 'success',
+            'message' => 'Product erased',
+        ]);
+    }
+
+    /**
+     * Remove a warehouse from specified resource.
+     */
+    public function remove(Product $product)
+    {
+        $product->warehouses()->detach(Auth::user()->warehouse->id);
+        return back()->with([
+            'type' => 'success',
+            'message' => 'Product removed from this warehouse',
+        ]);
     }
 }
