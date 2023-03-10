@@ -17,7 +17,6 @@ return new class extends Migration
             $table->id();
             $table->uuid();
             $table->string('name');
-            $table->string('type');
             $table->text('description');
             $table->double('unit_price');
             $table->softDeletes();

@@ -1,9 +1,11 @@
 <?php
 
 use App\Http\Controllers\ProfileController;
+use App\Models\Product;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
+use function GuzzleHttp\Promise\all;
 
 /*
 |--------------------------------------------------------------------------
@@ -35,6 +37,9 @@ Route::middleware('auth')->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
 
-Route::resource('products', \App\Http\Controllers\ProductController::class);
+Route::resource('products', \App\Http\Controllers\ProductController::class)->middleware(['auth']);
+Route::get('show_warehouse', function(){
+    return Auth::user()->warehouse->products;
+})->middleware("auth");
 
 require __DIR__.'/auth.php';
