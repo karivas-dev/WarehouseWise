@@ -2,9 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\ProductRequest;
 use App\Models\Category;
 use App\Models\Product;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Inertia\Inertia;
 
@@ -46,28 +46,13 @@ class ProductController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
+    public function store(ProductRequest $request)
     {
-        $product_attributes = $request->validate([
-            'name' => 'required|string|max:255',
-            'description' => 'required|string|max:5000',
-            'unit_price' => 'required|decimal:2|gt:0',
-        ]);
+        $product = Product::create($request->validatedProduct());
 
-        $categories_attributes = $request->validate([
-            'categories' => 'required|array',
-            'categories.*' => 'numeric|gt:0|decimal:0|max:255',
-        ]);
+        $product->categories()->attach($request->validatedCategoriesId());
 
-        $quantity_attribute = $request->validate([
-            'quantity' => 'required|decimal:0|gte:0',
-        ]);
-
-        $product = Product::create($product_attributes);
-
-        $product->categories()->attach($categories_attributes['categories']);
-
-        $product->warehouses()->attach(Auth::user()->warehouse->id, $quantity_attribute);
+        $product->warehouses()->attach(Auth::user()->warehouse->id, $request->validatedQuantity());
 
         return back()->with([
             'type' => 'success',
@@ -102,36 +87,17 @@ class ProductController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, Product $product)
+    public function update(ProductRequest $request, Product $product)
     {
-        $product_attributes = $request->validate([
-            'name' => 'required|string|max:255',
-            'description' => 'required|string|max:5000',
-            'unit_price' => 'required|decimal:2|gt:0',
-        ]);
-
-        $categories_attributes = $request->validate([
-            'categories' => 'required|array',
-            'categories.*' => 'numeric|gt:0|decimal:0|max:255',
-        ]);
-
-        $quantity_attribute = $request->validate([
-            'quantity' => 'required|decimal:0|gte:0',
-        ]);
-
-        $product->fill($product_attributes);
+        $product->fill($request->validatedProduct());
         $product->save();
 
-        $product->categories()->toggle($categories_attributes['categories']);
+        $product->categories()->sync($request->validatedCategoriesId());
 
         if($product->warehouses->where('id', Auth::user()->warehouse->id)->first()!=null)
-        {
-            $product->warehouses()->updateExistingPivot(Auth::user()->warehouse->id, $quantity_attribute);
-        }
-        else if ($quantity_attribute['quantity'] > 0)
-        {
-            $product->warehouses()->attach(Auth::user()->warehouse->id, $quantity_attribute);
-        }
+            $product->warehouses()->updateExistingPivot(Auth::user()->warehouse->id, $request->validatedQuantity());
+        else if ($request->validatedQuantity()['quantity'] > 0)
+            $product->warehouses()->attach(Auth::user()->warehouse->id, $request->validatedQuantity());
 
         return back()->with([
             'type' => 'success',
