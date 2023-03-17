@@ -53,6 +53,11 @@ class User extends Authenticatable
         return $this->belongsTo(Warehouse::class);
     }
 
+    public function role()
+    {
+        return $this->belongsTo(Role::class);
+    }
+
     public function setPasswordAttribute($password)
     {
         $this->attributes['password'] = bcrypt($password);
