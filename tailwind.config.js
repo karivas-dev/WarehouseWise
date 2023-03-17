@@ -13,6 +13,24 @@ module.exports = {
         extend: {
             fontFamily: {
                 sans: ['Nunito', ...defaultTheme.fontFamily.sans],
+                mukta: ['Mukta', 'sans-serif'],
+                raleway: ['Raleway', 'sans-serif'],
+            },
+            colors: {
+                'grayC': {
+                    500: '#313131',
+                    400: '#414141',
+                    300: '#525252'
+                },
+                'pinkC': {
+                    100: '#F4A5A3',
+                    300: '#EF7876',
+                    400: '#EC625F',
+                },
+                'whiteC': {
+                    500: '#EEEEEE',
+                    400: '#F1F6F5',
+                }
             },
         },
     },
