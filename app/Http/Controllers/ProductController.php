@@ -23,7 +23,7 @@ class ProductController extends Controller
             $query->where('name', 'LIKE', "%$search%");
         })->with('warehouses')->paginate(15)->withQueryString();
 
-        return Inertia::render('Products/Show', [
+        return Inertia::render('Products/Index', [
             'links' => $products->toArray()['links'],
             'warehouse' => Auth::user()->warehouse,
             'products' => $products->map(function($product){
@@ -80,7 +80,7 @@ class ProductController extends Controller
      */
     public function show(Product $product)
     {
-        return Inertia::render('Products/Show2', [
+        return Inertia::render('Products/Show', [
             'product' => $product->makeVisible('description')->append('quantity')->load('warehouses'),
             'available' => $product->warehouses->where('id', Auth::user()->warehouse->id)->where('pivot.quantity', '>', 0)->first()!=null,
             'warehouses' => $product->warehouses->where('id', '!=' ,Auth::user()->warehouse->id)->where('pivot.quantity', '>', 0),

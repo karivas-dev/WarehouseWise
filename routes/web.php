@@ -40,7 +40,7 @@ Route::middleware('auth')->group(function () {
 
 Route::resource('products', ProductController::class)->middleware(['auth']);
 Route::delete('products/{product}/remove', [ProductController::class, 'remove'])->middleware(['auth'])->name('products.remove');
-Route::get('show_warehouse', function(){
+Route::get('show_warehouse', function() {
     return Auth::user()->warehouse->products;
 })->middleware("auth");
 
