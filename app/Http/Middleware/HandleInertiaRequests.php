@@ -30,10 +30,12 @@ class HandleInertiaRequests extends Middleware
      */
     public function share(Request $request): array
     {
+        if ($request->user() != null)
+            $request->user()->makeHidden(['id', 'created_at', 'deleted_at', 'role_id', 'updated_at', 'warehouse_id'])->load('role', 'warehouse');
+
         return array_merge(parent::share($request), [
             'auth' => [
                 'user' => $request->user(),
-                'role' => $request->user()?->role->type
             ],
             'flash' => [
                 'type' => fn () => $request->session()->get('type'),
