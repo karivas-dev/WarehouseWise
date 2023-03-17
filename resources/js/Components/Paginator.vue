@@ -14,12 +14,12 @@ const linksLength = computed(() => {
         <ul class="inline-flex">
             <li v-for="(link, index) in links">
                 <Link :href="link.url"
-                        class="px-3 py-2 leading-tight border dark:bg-gray-800 dark:hover:bg-gray-700"
+                        class="px-3 py-2 leading-tight border dark:bg-grayC-500 dark:hover:bg-grayC-300"
                         :class="{
                             'ml-0 rounded-l-lg': index == 0,
                             'rounded-r-lg': index == linksLength,
-                            'text-gray-500 bg-white hover:bg-gray-100 hover:text-gray-700 dark:border-gray-700 dark:text-gray-400 dark:hover:text-white': !link.active,
-                            'text-blue-600 bg-blue-50 hover:bg-blue-100 hover:text-blue-700 dark:border-gray-700 dark:bg-gray-700 font-bold  dark:hover:text-white dark:text-white': link.active,
+                            'text dark:border-grayC-400 dark:text-gray-400 dark:hover:text-white': !link.active,
+                            'text dark:border-grayC-300 dark:bg-gray-700 font-bold': link.active,
                         }"
                       v-html="link.label" preserve-scroll
                 >
