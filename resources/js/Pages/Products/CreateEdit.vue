@@ -4,11 +4,11 @@ import { useForm, usePage } from '@inertiajs/vue3';
 const props = defineProps(['categories', 'product', 'selected_categories']);
 
 const form = useForm({
-    name:props.product?.name ?? '',
-    description:props.product?.description ?? '',
-    unit_price:props.product?.unit_price ?? 0.00,
-    categories:props.selected_categories ?? [],
-    quantity:props.product?.quantity ?? 0,
+    name: props.product?.name ?? '',
+    description: props.product?.description ?? '',
+    unit_price: props.product?.unit_price ?? 0.00,
+    categories: props.selected_categories ?? [],
+    quantity: props.product?.quantity ?? 0,
 });
 
 const store = ()=>{

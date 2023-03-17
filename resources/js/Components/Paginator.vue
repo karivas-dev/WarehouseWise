@@ -13,7 +13,7 @@ const linksLength = computed(() => {
     <div class="flex flex-row justify-center my-8">
         <ul class="inline-flex">
             <li v-for="(link, index) in links">
-                <Link :href="link.url"
+                <Link :href="link.url ?? ''"
                         class="px-3 py-2 leading-tight border dark:bg-gray-800 dark:hover:bg-gray-700"
                         :class="{
                             'ml-0 rounded-l-lg': index == 0,

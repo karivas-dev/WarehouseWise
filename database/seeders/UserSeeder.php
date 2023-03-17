@@ -23,6 +23,7 @@ class UserSeeder extends Seeder
         User::factory()->create([
             'email' => 'admin@example.com',
             'warehouse_id' => $warehouses[0]->id,
+            'role_id' => 1,
         ]);
     }
 }

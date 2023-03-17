@@ -2,11 +2,10 @@
 
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\ProfileController;
-use App\Models\Product;
+use App\Http\Controllers\UserController;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
-use function GuzzleHttp\Promise\all;
 
 /*
 |--------------------------------------------------------------------------
@@ -40,8 +39,7 @@ Route::middleware('auth')->group(function () {
 
 Route::resource('products', ProductController::class)->middleware(['auth']);
 Route::delete('products/{product}/remove', [ProductController::class, 'remove'])->middleware(['auth'])->name('products.remove');
-Route::get('show_warehouse', function(){
-    return Auth::user()->warehouse->products;
-})->middleware("auth");
+
+Route::resource('users', UserController::class)->middleware(['auth']);
 
 require __DIR__.'/auth.php';
