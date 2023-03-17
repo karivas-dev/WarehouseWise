@@ -64,7 +64,9 @@ class UserController extends Controller
      */
     public function show(User $user)
     {
-        //
+        return Inertia::render('Users/Show', [
+            'user' => $user->load(['role', 'warehouse']),
+        ]);
     }
 
     /**
@@ -72,15 +74,24 @@ class UserController extends Controller
      */
     public function edit(User $user)
     {
-        //
+        return Inertia::render('Users/CreateEdit', [
+            'user' => $user,
+            'roles' => Role::all(),
+            'warehouses' => Warehouse::select('id', 'name')->get(),
+        ]);
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, User $user)
+    public function update(UserRequest $request, User $user)
     {
-        //
+        $user->fill($request->validated());
+        $user->save();
+        return back()->with([
+            'type' => 'success',
+            'message' => 'User updated successfully'
+        ]);
     }
 
     /**
@@ -88,6 +99,10 @@ class UserController extends Controller
      */
     public function destroy(User $user)
     {
-        //
+        $user->delete();
+        return back()->with([
+            'type' => 'success',
+            'message' => 'User deleted successfully'
+        ]);
     }
 }
