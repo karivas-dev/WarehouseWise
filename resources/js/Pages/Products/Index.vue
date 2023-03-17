@@ -6,6 +6,8 @@ import { throttle } from "lodash";
 import Table from "@/Components/Table.vue";
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import { Head } from '@inertiajs/vue3';
+import InputSearch from "@/Components/InputSearch.vue";
+
 
 const props = defineProps(['products', 'warehouse', 'filters', 'links']);
 const search = ref(props.filters.search);
@@ -40,20 +42,7 @@ watch(search, throttle(function (value) {
                     </Link>
 
                     <form class="flex items-center">
-                        <label for="simple-search" class="sr-only">Search</label>
-                        <div class="relative w-full">
-                            <div class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
-                                <svg aria-hidden="true" class="w-5 h-5 text-gray-900" fill="currentColor"
-                                    viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
-                                    <path fill-rule="evenodd"
-                                        d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z"
-                                        clip-rule="evenodd"></path>
-                                </svg>
-                            </div>
-                            <input v-model="search" type="text" id="simple-search" class="
-                                border border-gray-300 text-sm rounded-full focus:ring-pinkC-400
-                                focus:border-pinkC-400 block w-full pl-10 p-2.5 text-black" placeholder="Search" required>
-                        </div>
+                        <InputSearch v-model="search"/>
                     </form>
                 </div>
 
@@ -99,4 +88,5 @@ watch(search, throttle(function (value) {
         </div>
     </div>
 
-</AuthenticatedLayout></template>
+</AuthenticatedLayout>
+</template>
