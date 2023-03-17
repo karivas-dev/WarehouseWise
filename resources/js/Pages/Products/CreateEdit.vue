@@ -1,6 +1,13 @@
 <script setup>
 import { useForm, usePage } from '@inertiajs/vue3';
+import { Head } from '@inertiajs/vue3';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
+import TextInput from '@/Components/TextInput.vue';
+import InputError from '@/Components/InputError.vue';
+import InputLabel from '@/Components/InputLabel.vue';
+import InputSelect from '@/Components/InputSelect.vue';
+import PrimaryButton from '@/Components/PrimaryButton.vue';
+
 
 const props = defineProps(['categories', 'product', 'selected_categories']);
 
@@ -48,32 +55,71 @@ const remove = () => {
 </script>
 
 <template>
+    <Head title="Product Edit" />
+
     <AuthenticatedLayout>
-        <form @submit.prevent="(product == null ? store() : update())">
-            <div>
-                <input v-model="form.name" type="text" maxlength="255">
-            </div>
-            <div>
-                <textarea v-model="form.description" maxlength="5000"></textarea>
-            </div>
-            <div>
-                <input v-model="form.unit_price" type="number" step="0.01" min="0.01">
-            </div>
-            <div>
+        <template #header>
+            <h2 class="font-semibold text-xl leading-tight">Edit product</h2>
+        </template>
 
-                <input v-model="form.quantity" type="number" min="0">
-            </div>
-            <div>
-                <select v-model="form.categories" multiple>
-                    <option v-for="category in categories" :key="category.id" :value="category.id">
-                        {{ category.name }}
-                    </option>
-                </select>
-            </div>
+        <div class="py-12">
+            <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
+                <div class="p-6 rounded-lg bg-grayC-400 space-y-6 ">
 
-            <input type="submit">
-        </form>
-        <button @click="destroy" v-if="product != null">Global Delete</button>
-        <button @click="remove" v-if="product != null">Delete From This Warehouse</button>
+                    <form @submit.prevent="(product == null ? store() : update())" class="mt-6 space-y-6">
+                        <div>
+                            <InputLabel for="name" value="Name" />
+
+                            <TextInput id="name" type="text" class="mt-1 block w-full" v-model="form.name" required
+                            maxlength="255" autofocus/>
+
+                            <InputError class="mt-2" :message="form.errors.name" />
+                        </div>
+                        <div>
+                            <InputLabel for="" value="Description" />
+
+                            <TextInput v-model="form.description"
+                            class="mt-1 block w-full"
+                            maxlength="5000"/>
+                        </div>
+                        <div>
+                            <InputLabel for="name" value="Unit Price" />
+
+                            <TextInput id="unitPrice" type="number" class="mt-1 block w-full"
+                            v-model="form.unit_price" required
+                            maxlength="255" step="0.01" min="0.01"/>
+                        </div>
+                        <div>
+                            <InputLabel for="name" value="Quantity" />
+
+                            <TextInput id="unitPrice" type="number" class="mt-1 block w-full"
+                            v-model="form.quantity" required
+                            min="0"/>
+                        </div>
+                        <div>
+                            <InputLabel for="category" value="Category" />
+
+                            <InputSelect v-model="form.categories">
+                                <option v-for="category in categories" :key="category.id" :value="category.id">
+                                    {{ category.name }}
+                                </option>
+                            </InputSelect>
+
+                            <select class="select" v-model="form.categories" multiple>
+                                <option v-for="category in categories" :key="category.id" :value="category.id">
+                                    {{ category.name }}
+                                </option>
+                            </select>
+                        </div>
+
+                        <PrimaryButton>
+                            Update
+                        </PrimaryButton>
+                    </form>
+                    <PrimaryButton @click="destroy" v-if="product != null">Global Delete</PrimaryButton>
+                    <PrimaryButton @click="remove" v-if="product != null">Delete From This Warehouse</PrimaryButton>
+                </div>
+            </div>
+        </div>
     </AuthenticatedLayout>
 </template>

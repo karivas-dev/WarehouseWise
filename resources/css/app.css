@@ -11,4 +11,7 @@
     .text {
         @apply font-medium text-sm text-whiteC-500 font-raleway selection:bg-pinkC-400;
     }
+    .select {
+        @apply bg-grayC-300 border border-grayC-500 text-sm rounded-lg focus:ring-pinkC-400 focus:border-pinkC-400 block w-full p-2.5 placeholder-gray-400 text dark:focus:ring-pinkC-400 mt-1;
+    }
 }
