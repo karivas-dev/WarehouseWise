@@ -17,7 +17,7 @@ class WarehouseFactory extends Factory
     public function definition()
     {
         return [
-            'name' => 'WW ' . fake()->words(2, true),
+            'name' => fake()->words(2, true),
             'location' => fake()->address(),
             'phone' => fake()->phoneNumber(),
             'email' => fake()->unique()->email()

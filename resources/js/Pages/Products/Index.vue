@@ -7,6 +7,7 @@ import Table from "@/Components/Table.vue";
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import { Head } from '@inertiajs/vue3';
 import InputSearch from "@/Components/InputSearch.vue";
+import PrimaryButton from "@/Components/PrimaryButton.vue";
 
 
 const props = defineProps(['products', 'warehouse', 'filters', 'links']);
@@ -33,13 +34,9 @@ watch(search, throttle(function (value) {
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 py-12">
             <div class="overflow-hidden shadow-sm rounded-lg px-6 bg-grayC-400">
                 <div class="w-100 my-8 flex justify-between">
-                    <Link :href="route('products.index', { search: search, all: !all })" type="button"
-                    class="bg-pinkC-400 border border-whiteC-400 rounded-full
-                    font-extrabold text-white font-mukta uppercase tracking-widest hover:bg-pinkC-300
-                    focus:ring-2 focus:ring-pinkC-400 transition ease-in-out
-                    duration-150 px-5 py-2.5 mr-2 mb-2">
-                    {{ all ? "Show local products" : "Show all products" }}
-                    </Link>
+                    <PrimaryButton :href="route('products.index', { search: search, all: !all })">
+                        {{ all ? "Show local products" : "Show all products" }}
+                    </PrimaryButton>
 
                     <form class="flex items-center">
                         <InputSearch v-model="search"/>

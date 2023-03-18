@@ -1,4 +1,9 @@
 <script setup>
+import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout.vue";
+import Card from "@/Components/Card.vue";
+import TextInput from "@/Components/TextInput.vue";
+import InputLabel from "@/Components/InputLabel.vue";
+import InputError from "@/Components/InputError.vue";
 import {useForm, usePage} from "@inertiajs/vue3";
 
 const props = defineProps(['user', 'warehouses', 'roles']);
@@ -30,16 +35,29 @@ const update = ()=> {
 </script>
 
 <template>
-    <form @submit.prevent="(user === undefined ? store() : update())">
-        <input type="text" name="name" v-model="form.name">
-        <input type="text" name="email" v-model="form.email">
-        <input :type="(user === undefined ? 'text' : 'password')" name="password" v-model="form.password">
-        <select name="role_id" v-model="form.role_id">
-            <option v-for="warehouse in warehouses" :key="warehouse.id" :value="warehouse.id">{{ warehouse.name }}</option>
-        </select>
-        <select name="warehouse_id" v-model="form.warehouse_id">
-            <option v-for="role in roles" :key="role.id" :value="role.id">{{ role.type }}</option>
-        </select>
-        <input type="submit">
-    </form>
+    <AuthenticatedLayout>
+        <Card>
+            <form @submit.prevent="(user === undefined ? store() : update())">
+                <div>
+                    <InputLabel for="name" value="Name" />
+                    <TextInput id="name" type="text" class="mt-1 block w-full" v-model="form.name" required autofocus/>
+                    <InputError class="mt-2" :message="form.errors.name" />
+                </div>
+
+                <div class="mt-4">
+                    <InputLabel for="email" value="Email" />
+                    <TextInput id="email" type="email" class="mt-1 block w-full" v-model="form.email" required autofocus/>
+                    <InputError class="mt-2" :message="form.errors.email" />
+                </div>
+                <input :type="(user === undefined ? 'text' : 'password')" name="password" v-model="form.password">
+                <select name="role_id" v-model="form.role_id">
+                    <option v-for="warehouse in warehouses" :key="warehouse.id" :value="warehouse.id">{{ warehouse.name }}</option>
+                </select>
+                <select name="warehouse_id" v-model="form.warehouse_id">
+                    <option v-for="role in roles" :key="role.id" :value="role.id">{{ role.type }}</option>
+                </select>
+                <input type="submit">
+            </form>
+        </Card>
+    </AuthenticatedLayout>
 </template>
