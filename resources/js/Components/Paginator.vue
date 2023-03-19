@@ -1,16 +1,23 @@
 <script setup>
-import { Link } from "@inertiajs/vue3";
-import {computed} from "vue";
+import {Link, router} from "@inertiajs/vue3";
+import {computed, ref} from "vue";
 
 const props = defineProps(['links']);
-
+const scroll = ref(false);
 const linksLength = computed(() => {
     return props.links.length - 1;
 });
 
 const scrollToTop = () => {
-    window.scrollTo({top: 0, behavior: 'smooth'});
+    scroll.value = true;
 }
+
+router.on('finish', (event) => {
+    if (scroll.value === true) {
+        scroll.value = false;
+        window.scrollTo({top: 0, behavior: 'smooth'});
+    }
+});
 </script>
 
 <template>
