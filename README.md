@@ -1,32 +1,41 @@
 # WarehouseWise
  
-## `Práctica de Investigación 1: MVC`
-En el apartado de Product List se puede encontrar nuestra práctica desarrollada de la investigación 1.
+### `Lenguajes Interpretados en el Servidor` LIS104 G01T
 
-![1](https://user-images.githubusercontent.com/72422927/219905573-6937506a-b8e5-4528-a7c5-f6c1f318b4bd.png)
+---
 
-### Elementos
+### **Presentado por:**
+| Apellido | Nombre |
+| -- | -- |
+| Alvarenga Romero | Josías |
+| Bonilla Elias | Luis |              
+| Gómez Castro | Diego |       
+| Rivas Rivas | Karen |   
 
-#### Modelos
+---
 
-En el proyectro se han creado 6 modelos que permiten el acceso a los datos registrados en la base de datos utilizada.
-![image](https://user-images.githubusercontent.com/72422927/219905630-85583a2a-7e82-46fb-b97d-ad15060722c2.png)
+### **Descripción del proyecto**
 
-#### Controladores
+WarehouseWise esta enfocado a facilitar el manejo de datos de un inventario para una empresa. Mediante su interfaz gráfica y acceso a usuarios, se permitirá crear y modicar la existencia de los productos incluyendo detalles como precio, tipo, cantidad, entre otros. Además, permite el manejo de los productos a través de las distintas bodegas de la empresa.
 
-De igual forma los controlladores se encuentra en app>Http>Controllers
-![image](https://user-images.githubusercontent.com/72422927/219905782-d09a0c15-bb38-4ad3-9a81-cb84f20ac291.png)
+Por la traducción del nombre al espeñol, WarehouseWise, se busca transmitir que será un software que ayude a las empresas  a administrar sus recursos de una manera eficaz por medio de la automatización de registros, eliminando la necesidad de registros físicos.
 
-#### Vista
+---
 
-Por otra parte las vistas desarrolladas se encuentran en resources>js>Pages
-![image](https://user-images.githubusercontent.com/72422927/219905688-2215014c-d1dd-4f2b-82ef-3358a113af15.png)
+### **Link de WW Kanban**
+El proyecto está siendo gestionado bajo el uso de Projects de Github [WW Project.](https://github.com/users/Alca1707/projects/2/views/4)
 
-Al ingresar a la URL que despliega los productos, dentro del router se realiza la petición de la vista al controllador, quien a su vez consulta los modelos para brindar la información necesaria en caso de estar buscando productos filtrados.
+---
 
-Las válidaciones de entradas del usuario se realizan a través de reglas específicadas en los modelos creados.
+### **Link de PDF**
+El archivo PDF se encuentra en el siguiente [Enlace.](https://drive.google.com/file/d/1MUOJvoVaAoRujm58Ny_0ASX2og9zlo3I/view?usp=sharing)
 
-#### Implementación de expresiones regulares 
+---
 
-Sirven para evitar inyección de código en el buscador, al proporcionar caracteres diferentes a letras, espacios y números, estos son ignorados.
-![image](https://user-images.githubusercontent.com/72422927/219910282-16f68cbc-5cfa-4380-a919-43e5fe84081b.png)
+### **Licencia Creative Commons**
+
+Attribution-NonCommercial-NoDerivatives (by-nc-nd)
+
+Esta licencia restringe la modificación del contenido de ninguna manera ni su comercialización.
+
+![image](http://parapnte.educacion.navarra.es/wp-content/uploads/2016/02/creativecommons02.png)
