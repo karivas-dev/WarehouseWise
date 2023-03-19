@@ -42,7 +42,9 @@ const update = () => {
 
     <AuthenticatedLayout>
         <template #header>
-            <h2 class="font-semibold text-xl leading-tight">Edit product</h2>
+            <h2 class="font-semibold text-xl leading-tight">
+                {{ product !== undefined ? 'Edit product' : 'Create product' }}
+            </h2>
         </template>
 
         <card>

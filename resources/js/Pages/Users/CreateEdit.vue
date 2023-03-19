@@ -29,7 +29,9 @@ const update = ()=> {
 <template>
     <AuthenticatedLayout>
         <template #header>
-            <h2 class="font-semibold text-xl leading-tight">Edit user</h2>
+            <h2 class="font-semibold text-xl leading-tight">
+                {{ user !== undefined ? 'Edit user' : 'Create user' }}
+            </h2>
         </template>
 
         <Card>
