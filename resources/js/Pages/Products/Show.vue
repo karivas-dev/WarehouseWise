@@ -37,6 +37,9 @@ const remove = () => {
                             <span>{{ available ? 'Quantity available: ' + product.quantity : 'Not available'}}</span>
                             <br>
                         </div>
+                        <div class="text-zinc-400 text-lg mt-2 max-w-3xl text-justify">
+                            Description: {{ product.description }}
+                        </div>
                     </div>
                 </div>
                 <div class="flex flex-col justify-center items-center">
@@ -51,9 +54,6 @@ const remove = () => {
                     </PrimaryButton>
                     <!-- Make a button for adding it to actual order -->
                 </div>
-            </div>
-            <div class="text-zinc-400 text-lg mt-2 max-w-3xl text-justify">
-                Description: {{ product.description }}
             </div>
         </Card>
 
