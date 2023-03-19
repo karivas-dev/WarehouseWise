@@ -10,6 +10,11 @@ use Inertia\Inertia;
 
 class ProductController extends Controller
 {
+    public function __construct()
+    {
+        $this->authorizeResource(Product::class, 'product');
+    }
+
     /**
      * Display a listing of the resource.
      */
@@ -54,9 +59,10 @@ class ProductController extends Controller
 
         $product->warehouses()->attach(Auth::user()->warehouse->id, $request->validatedQuantity());
 
-        return back()->with([
-            'type' => 'success',
+        return to_route('products.show', $product->id)->with([
+            'type' => 'floating',
             'message' => 'Product created successfully',
+            'level' => 'success'
         ]);
     }
 
@@ -68,7 +74,7 @@ class ProductController extends Controller
         return Inertia::render('Products/Show', [
             'product' => $product->makeVisible('description')->append('quantity')->load('warehouses'),
             'available' => $product->warehouses->where('id', Auth::user()->warehouse->id)->where('pivot.quantity', '>', 0)->first()!=null,
-            'warehouses' => $product->warehouses->where('id', '!=' ,Auth::user()->warehouse->id)->where('pivot.quantity', '>', 0),
+            'warehouse_id' => Auth::user()->warehouse->id,
         ]);
     }
 
@@ -99,9 +105,10 @@ class ProductController extends Controller
         else if ($request->validatedQuantity()['quantity'] > 0)
             $product->warehouses()->attach(Auth::user()->warehouse->id, $request->validatedQuantity());
 
-        return back()->with([
-            'type' => 'success',
+        return to_route('products.show', $product->id)->with([
+            'type' => 'floating',
             'message' => 'Product updated',
+            'level' => 'success'
         ]);
     }
 
@@ -112,9 +119,10 @@ class ProductController extends Controller
     {
         $product->warehouses()->sync([]);
         $product->delete();
-        return back()->with([
-            'type' => 'success',
-            'message' => 'Product erased',
+        return to_route('products.index')->with([
+            'type' => 'floating',
+            'message' => 'Product deleted successfully',
+            'level' => 'success'
         ]);
     }
 
@@ -125,8 +133,9 @@ class ProductController extends Controller
     {
         $product->warehouses()->detach(Auth::user()->warehouse->id);
         return back()->with([
-            'type' => 'success',
+            'type' => 'floating',
             'message' => 'Product removed from this warehouse',
+            'level' => 'success'
         ]);
     }
 }

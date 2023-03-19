@@ -3,11 +3,11 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\UserRequest;
-use App\Models\Product;
 use App\Models\Role;
 use App\Models\User;
 use App\Models\Warehouse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Inertia\Inertia;
 
 class UserController extends Controller
@@ -24,15 +24,16 @@ class UserController extends Controller
     {
         $search = request('search');
 
-        $users = User::when($search ?? false, function($query, $search){
+        $users = filter_var(request("all"), FILTER_VALIDATE_BOOLEAN) ? User::query() : Auth::user()->warehouse->users();
+        $users = $users->when($search ?? false, function($query, $search){
             $search = preg_replace("/([^A-Za-z0-9\s])+/i", "", $search);
             $query->where('name', 'LIKE', "%$search%");
-        })->with('warehouse')->paginate(15)->withQueryString();
+        })->with('warehouse', 'role')->paginate(15)->withQueryString();
 
         return Inertia::render('Users/Index', [
             'links' => $users->toArray()['links'],
             'users' => $users->toArray()['data'],
-            'filters' => request()->only(['search']),
+            'filters' => request()->only(['search', 'all']),
         ]);
     }
 
@@ -52,10 +53,11 @@ class UserController extends Controller
      */
     public function store(UserRequest $request)
     {
-        Product::create($request->validated());
-        return back()->with([
-            'type' => 'success',
-            'message' => 'User created successfully'
+        $user = User::create($request->validated());
+        return to_route('users.show', $user->id)->with([
+            'type' => 'floating',
+            'message' => 'User created successfully',
+            'level' => 'success'
         ]);
     }
 
@@ -88,9 +90,10 @@ class UserController extends Controller
     {
         $user->fill($request->validated());
         $user->save();
-        return back()->with([
-            'type' => 'success',
-            'message' => 'User updated successfully'
+        return to_route('users.show', $user->id)->with([
+            'type' => 'floating',
+            'message' => 'User updated successfully',
+            'level' => 'success'
         ]);
     }
 
@@ -100,9 +103,10 @@ class UserController extends Controller
     public function destroy(User $user)
     {
         $user->delete();
-        return back()->with([
-            'type' => 'success',
-            'message' => 'User deleted successfully'
+        return to_route('users.index')->with([
+            'type' => 'floating',
+            'message' => 'User deleted successfully',
+            'level' => 'success'
         ]);
     }
 }

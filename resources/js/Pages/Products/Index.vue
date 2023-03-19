@@ -31,13 +31,16 @@ watch(search, throttle(function (value) {
             <h2 class="font-semibold text-xl leading-tight">Products Table</h2>
         </template>
 
-        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 py-12">
+        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 py-6">
             <div class="overflow-hidden shadow-sm rounded-lg px-6 bg-grayC-400">
                 <div class="w-100 my-8 flex justify-between">
                     <PrimaryButton :href="route('products.index', { search: search, all: !all })">
                         {{ all ? "Show local products" : "Show all products" }}
                     </PrimaryButton>
 
+                    <PrimaryButton :href="route('products.create')" v-if="$page.props.auth.user.role.type === 'administrator'">
+                        Create new product
+                    </PrimaryButton>
                     <form class="flex items-center">
                         <InputSearch v-model="search"/>
                     </form>
@@ -56,7 +59,7 @@ watch(search, throttle(function (value) {
                             <th scope="col" class="px-6 py-3">
                                 Unit Price
                             </th>
-                            <th scope="col" class="px-6 py-3">
+                            <th scope="col" class="px-6 py-3" v-if="$page.props.auth.user.role.type === 'administrator'">
                                 <span class="sr-only">Edit</span>
                             </th>
                         </template>
@@ -64,8 +67,9 @@ watch(search, throttle(function (value) {
                         <tr class="bg-grayC-400 border-b hover:bg-grayC-300"
                             v-for="product in products" :key="products.id">
                             <th scope="row" class="px-6 py-4 font-medium text whitespace-nowrap">
-                                <Link :href="route('products.show', { id: product.id })" class="hover:underline">{{
-                                    product.name }}</Link>
+                                <Link :href="route('products.show', { id: product.id })" class="hover:underline">
+                                    {{ product.name }}
+                                </Link>
                             </th>
                             <td class="px-6 py-4">
                                 {{ product.quantity ?? "Not available at local WW" }}
@@ -73,7 +77,7 @@ watch(search, throttle(function (value) {
                             <td class="px-6 py-4">
                                 $ {{ product.unit_price }}
                             </td>
-                            <td class="px-6 py-4 text-right">
+                            <td class="px-6 py-4 text-right" v-if="$page.props.auth.user.role.type === 'administrator'">
                                 <Link :href="route('products.edit', { id: product.id })"
                                     class="text-pinkC-100 hover:text-pinkC-400 hover:font-semibold hover:underline">Edit</Link>
                             </td>

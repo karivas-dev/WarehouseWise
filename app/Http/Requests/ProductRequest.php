@@ -30,7 +30,7 @@ class ProductRequest extends FormRequest
             'categories' => 'required|array',
             'categories.*' => 'numeric|gt:0|decimal:0|max:255',
             // product_warehouse quantity
-            'quantity' => 'required|decimal:0|gte:0',
+            'quantity' => 'required|decimal:0|gte:0|lte:4294967295',
         ];
     }
 

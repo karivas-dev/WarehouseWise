@@ -40,6 +40,7 @@ class HandleInertiaRequests extends Middleware
             'flash' => [
                 'type' => fn () => $request->session()->get('type'),
                 'message' => fn () => $request->session()->get('message'),
+                'level' => fn () => $request->session()->get('level'),
             ],
             'ziggy' => function () use ($request) {
                 return array_merge((new Ziggy)->toArray(), [

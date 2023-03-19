@@ -22,11 +22,10 @@ class UserRequest extends FormRequest
      */
     public function rules(): array
     {
-        //dd($this->route('user')->name);
         return [
             'name' => 'required|string|max:255',
             'email' => 'required|email|max:255',
-            'password' => [Rule::excludeIf($this->route('user') != null),'required|max:255'],
+            'password' => [Rule::excludeIf($this->route('user') != null),'required', 'max:255'],
             'role_id' => 'required|numeric|exists:roles,id',
             'warehouse_id' => 'required|numeric|exists:warehouses,id'
         ];

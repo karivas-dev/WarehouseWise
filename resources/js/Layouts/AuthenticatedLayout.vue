@@ -1,17 +1,19 @@
 <script setup>
-import { ref } from 'vue';
+import {ref} from 'vue';
 import ApplicationLogo from '@/Components/ApplicationLogo.vue';
 import Dropdown from '@/Components/Dropdown.vue';
 import DropdownLink from '@/Components/DropdownLink.vue';
 import NavLink from '@/Components/NavLink.vue';
 import ResponsiveNavLink from '@/Components/ResponsiveNavLink.vue';
 import { Link } from '@inertiajs/vue3';
+import FlashMessage from "@/Components/FlashMessage.vue";
 
 const showingNavigationDropdown = ref(false);
 </script>
 
 <template>
-    <div>
+    <flash-message/>
+    <div class="scroll-smooth">
         <div class="min-h-screen bg-grayC-500 text">
             <nav class="bg-grayC-400 border-b border-grayC-300">
                 <!-- Primary Navigation Menu -->
@@ -32,13 +34,14 @@ const showingNavigationDropdown = ref(false);
                                 <NavLink :href="route('dashboard')" :active="route().current('dashboard')">
                                     Dashboard
                                 </NavLink>
-                                <NavLink :href="route('products.index')" :active="route().current('products.index')">
-                                    Products
-                                </NavLink>
                                 <NavLink :href="route('dashboard')" :active="route().current('dashboard')">
                                     Orders
                                 </NavLink>
-                                <NavLink :href="route('dashboard')" :active="route().current('dashboard')">
+                                <NavLink :href="route('products.index')" :active="route().current('products.index')">
+                                    Products
+                                </NavLink>
+                                <NavLink :href="route('users.index')" :active="route().current('users.index')"
+                                         v-if="$page.props.auth.user.role.type === 'administrator'">
                                     Users
                                 </NavLink>
                             </div>

@@ -19,12 +19,13 @@ use Inertia\Inertia;
 */
 
 Route::get('/', function () {
-    return Inertia::render('Welcome', [
+    /*return Inertia::render('Welcome', [
         'canLogin' => Route::has('login'),
         'canRegister' => Route::has('register'),
         'laravelVersion' => Application::VERSION,
         'phpVersion' => PHP_VERSION,
-    ]);
+    ]);*/
+    return redirect('/login');
 });
 
 Route::get('/dashboard', function () {
@@ -38,7 +39,8 @@ Route::middleware('auth')->group(function () {
 });
 
 Route::resource('products', ProductController::class)->middleware(['auth']);
-Route::delete('products/{product}/remove', [ProductController::class, 'remove'])->middleware(['auth'])->name('products.remove');
+Route::delete('products/{product}/remove', [ProductController::class, 'remove'])->middleware(['auth'])
+    ->can('remove', 'product')->name('products.remove');
 
 Route::resource('users', UserController::class)->middleware(['auth']);
 
