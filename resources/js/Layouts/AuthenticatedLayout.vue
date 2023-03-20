@@ -13,7 +13,7 @@ const showingNavigationDropdown = ref(false);
 
 <template>
     <flash-message/>
-    <div class="scroll-smooth">
+    <div class="scroll-smooth max-h-screen">
         <div class="min-h-screen bg-grayC-500 text">
             <nav class="bg-grayC-400 border-b border-grayC-300">
                 <!-- Primary Navigation Menu -->
@@ -148,17 +148,20 @@ const showingNavigationDropdown = ref(false);
                 </div>
             </nav>
 
-            <!-- Page Heading -->
-            <header class="bg-grayC-500 shadow" v-if="$slots.header">
-                <div class="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
-                    <slot name="header" />
-                </div>
-            </header>
+            <div class="scrollbar-thin !overflow-y-auto !overflow-x-hidden scrollbar-margin scrollbar-thumb-rounded-lg
+                scrollbar-thumb-neutral-500 max-h-[calc(100vh-65px)]">
+                <!-- Page Heading -->
+                <header class="bg-grayC-500 shadow" v-if="$slots.header">
+                    <div class="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
+                        <slot name="header" />
+                    </div>
+                </header>
 
-            <!-- Page Content -->
-            <main>
-                <slot />
-            </main>
+                <!-- Page Content -->
+                <main>
+                    <slot />
+                </main>
+            </div>
         </div>
     </div>
 </template>
