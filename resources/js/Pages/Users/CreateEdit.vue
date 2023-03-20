@@ -30,7 +30,7 @@ const update = ()=> {
     <AuthenticatedLayout>
         <template #header>
             <h2 class="font-semibold text-xl leading-tight">
-                {{ user !== undefined ? 'Edit user' : 'Create user' }}
+                {{ user !== undefined ? 'Edit user' : 'Add user' }}
             </h2>
         </template>
 
@@ -71,8 +71,12 @@ const update = ()=> {
                 </div>
 
                 <div class="flex justify-end">
-                    <PrimaryButton class="mr-4" :disabled="form.processing">
-                        {{ user === undefined ? 'Create' : 'Update' }}
+                    <PrimaryButton :back="true">
+                        Return back
+                    </PrimaryButton>
+
+                    <PrimaryButton class="ml-4" :disabled="form.processing">
+                        {{ user === undefined ? 'Add' : 'Update' }}
                     </PrimaryButton>
                 </div>
             </form>

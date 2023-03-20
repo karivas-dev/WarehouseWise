@@ -41,6 +41,7 @@ watch(search, throttle(function (value) {
                     <PrimaryButton :href="route('products.create')" v-if="$page.props.auth.user.role.type === 'administrator'">
                         Create new product
                     </PrimaryButton>
+
                     <form class="flex items-center">
                         <InputSearch v-model="search"/>
                     </form>
@@ -77,7 +78,7 @@ watch(search, throttle(function (value) {
                             <td class="px-6 py-4">
                                 $ {{ product.unit_price }}
                             </td>
-                            <td class="px-6 py-4 text-right" v-if="$page.props.auth.user.role.type === 'administrator'">
+                            <td class="px-6 py-4 text-right">
                                 <Link :href="route('products.edit', { id: product.id })"
                                     class="text-pinkC-100 hover:text-pinkC-400 hover:font-semibold hover:underline">Edit</Link>
                             </td>
