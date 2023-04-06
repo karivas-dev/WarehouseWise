@@ -2,10 +2,14 @@
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout.vue";
 import PrimaryButton from "@/Components/PrimaryButton.vue";
 import Card from "@/Components/Card.vue";
-import {Link} from "@inertiajs/vue3";
+import {Link, router} from "@inertiajs/vue3";
 import { Head } from '@inertiajs/vue3';
 
 const props = defineProps(['user']);
+
+const destroy = () => {
+    router.delete(route('users.destroy', { id: props.product.id }));
+}
 </script>
 
 <template>
@@ -34,7 +38,7 @@ const props = defineProps(['user']);
                     <PrimaryButton :href="route('users.edit', { id: user.id })" class="w-full">
                         Edit user
                     </PrimaryButton>
-                    <PrimaryButton :href="route('users.destroy', { id: user.id })" class="mt-3 w-full">
+                    <PrimaryButton color="red" @click="destroy" class="mt-3 w-full">
                         Delete user
                     </PrimaryButton>
                 </div>

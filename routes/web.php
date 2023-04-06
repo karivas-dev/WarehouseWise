@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\UserController;
@@ -49,4 +50,6 @@ Route::delete('warehouses/{warehouse}/remove', [WarehouseController::class, 'rem
 
 Route::resource('users', UserController::class)->middleware(['auth']);
 
-require __DIR__ . '/auth.php';
+Route::resource('categories', CategoryController::class)->middleware(['auth']);
+
+require __DIR__.'/auth.php';
