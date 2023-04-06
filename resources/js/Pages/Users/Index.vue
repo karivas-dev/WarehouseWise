@@ -7,6 +7,7 @@ import Table from "@/Components/Table.vue";
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import InputSearch from "@/Components/InputSearch.vue";
 import PrimaryButton from "@/Components/PrimaryButton.vue";
+import { Head } from '@inertiajs/vue3';
 
 const props = defineProps(['users', 'links', 'filters']);
 const search = ref(props.filters.search);
@@ -22,7 +23,7 @@ watch(search, throttle(function (value) {
 </script>
 
 <template>
-    <Head title="Products table" />
+    <Head title="Users" />
 
     <AuthenticatedLayout>
         <template #header>

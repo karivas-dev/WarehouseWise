@@ -9,7 +9,6 @@ import { Head } from '@inertiajs/vue3';
 import InputSearch from "@/Components/InputSearch.vue";
 import PrimaryButton from "@/Components/PrimaryButton.vue";
 
-
 const props = defineProps(['products', 'warehouse', 'filters', 'links']);
 const search = ref(props.filters.search);
 const all = ref(props.filters.all === "1");
@@ -24,7 +23,7 @@ watch(search, throttle(function (value) {
 </script>
 
 <template>
-    <Head title="Products table" />
+    <Head title="Products" />
 
     <AuthenticatedLayout>
         <template #header>

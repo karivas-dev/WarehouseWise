@@ -43,11 +43,11 @@ const update = () => {
     <AuthenticatedLayout>
         <template #header>
             <h2 class="font-semibold text-xl leading-tight">
-                {{ product !== undefined ? 'Edit product' : 'Add product' }}
+                {{ product !== undefined ? 'Edit Product' : 'Add Product' }}
             </h2>
         </template>
 
-        <card>
+        <Card>
             <form @submit.prevent="(product == null ? store() : update())" class="space-y-6">
                 <div v-if="$page.props.auth.user.role.type === 'administrator'">
                     <InputLabel for="name" value="Name" />
@@ -106,7 +106,7 @@ const update = () => {
                     </PrimaryButton>
                 </div>
             </form>
-        </card>
+        </Card>
 
     </AuthenticatedLayout>
 </template>
