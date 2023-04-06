@@ -10,6 +10,10 @@ class Warehouse extends Model
 {
     use HasFactory, SoftDeletes;
 
+    protected $guarded = [
+        'id',
+        'deleted_at',
+    ];
     public $timestamps = false;
 
     public function products()
