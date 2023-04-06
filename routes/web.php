@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\UserController;
@@ -43,5 +44,7 @@ Route::delete('products/{product}/remove', [ProductController::class, 'remove'])
     ->can('remove', 'product')->name('products.remove');
 
 Route::resource('users', UserController::class)->middleware(['auth']);
+
+Route::resource('categories', CategoryController::class)->middleware(['auth']);
 
 require __DIR__.'/auth.php';
