@@ -3,26 +3,30 @@ import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout.vue";
 import PrimaryButton from "@/Components/PrimaryButton.vue";
 import Card from "@/Components/Card.vue";
 import {Link} from "@inertiajs/vue3";
+import { Head } from '@inertiajs/vue3';
 
 const props = defineProps(['user']);
 </script>
 
 <template>
+    <Head title="User" />
+
     <AuthenticatedLayout>
         <template #header>
-            <h2 class="font-semibold text-xl leading-tight">User</h2>
+            <h2 class="font-semibold text-xl leading-tight">User details</h2>
         </template>
 
         <Card>
             <div class="flex justify-between items-center">
                 <div class="flex justify-start items-center">
-                    <img src="https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png" class="rounded-full w-20">
-                    <div class="ml-7">
+                    <!--<img src="https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png" class="rounded-full w-20">-->
+                    <img src="/img/human.png" class="rounded w-24">
+                    <div class="ml-8">
                         <span class="inline text-5xl h-fit">{{ user.name }}</span>
                         <div class="mt-2 text-lg">
-                            Email: {{ user.email }}
+                            <span class="font-semibold">Role:</span> {{ user.role.type }}
                             <br>
-                            Role: {{ user.role.type }}
+                            <span class="font-semibold">Email:</span> {{ user.email }}
                         </div>
                     </div>
                 </div>
@@ -38,13 +42,13 @@ const props = defineProps(['user']);
         </Card>
 
         <Card>
-            <Link as="button" :href="route('users.show', { id: user.warehouse.id })" class="inline text-5xl hover:underline">Warehouse: {{ user.warehouse.name }}</Link>
+            <Link as="button" :href="route('warehouses.show', { id: user.warehouse.id })" class="inline text-4xl hover:underline">Warehouse: {{ user.warehouse.name }}</Link>
             <div class="mt-4 text-lg">
-                Phone: {{ user.warehouse.phone }}
+                <span class="font-semibold">Phone:</span> {{ user.warehouse.phone }}
                 <br>
-                Email: {{ user.warehouse.email }}
+                <span class="font-semibold">Email:</span> {{ user.warehouse.email }}
                 <br>
-                Location: {{ user.warehouse.location }}
+                <span class="font-semibold">Location:</span> {{ user.warehouse.location }}
             </div>
         </Card>
     </AuthenticatedLayout>
