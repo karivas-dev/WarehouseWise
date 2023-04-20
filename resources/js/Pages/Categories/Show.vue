@@ -33,7 +33,7 @@ const destroy = () => {
                         Edit category
                     </PrimaryButton>
                     <PrimaryButton color="red" @click="destroy" method="destroy" class="mt-3 w-full">
-                        Delete category
+                        Disable category
                     </PrimaryButton>
                 </div>
             </div>

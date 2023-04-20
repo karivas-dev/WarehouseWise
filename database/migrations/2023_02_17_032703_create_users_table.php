@@ -16,7 +16,7 @@ return new class extends Migration
     {
         Schema::create('users', function (Blueprint $table) {
             $table->id();
-            $table->foreignIdFor(\App\Models\Warehouse::class)->constrained()->cascadeOnUpdate()->restrictOnDelete();
+            $table->foreignIdFor(\App\Models\Warehouse::class)->nullable()->constrained()->cascadeOnUpdate()->restrictOnDelete();
             $table->string('name');
             $table->string('email')->unique();
             $table->string('password');

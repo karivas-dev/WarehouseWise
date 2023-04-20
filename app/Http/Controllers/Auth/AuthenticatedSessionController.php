@@ -32,6 +32,17 @@ class AuthenticatedSessionController extends Controller
     {
         $request->authenticate();
 
+        if (Auth::user()->role->type != 'director' && Auth::user()->warehouse == null) {
+            Auth::guard('web')->logout();
+            $request->session()->invalidate();
+            $request->session()->regenerateToken();
+            return redirect('login')->with([
+                'type' => 'floating',
+                'message' => 'This user is not available to login as the warehouse is neither available',
+                'level' => 'danger'
+            ]);
+        }
+
         $request->session()->regenerate();
 
         return redirect()->intended(RouteServiceProvider::HOME);

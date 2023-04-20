@@ -1,16 +1,18 @@
 <script setup>
-import {router, useForm} from '@inertiajs/vue3';
+import {router, useForm, usePage} from '@inertiajs/vue3';
 import { Head } from '@inertiajs/vue3';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import TextInput from '@/Components/TextInput.vue';
 import InputError from '@/Components/InputError.vue';
 import InputLabel from '@/Components/InputLabel.vue';
 import PrimaryButton from '@/Components/PrimaryButton.vue';
-import {watch} from "vue";
+import {ref, watch} from "vue";
 import Card from "@/Components/Card.vue";
 
 
 const props = defineProps(['categories', 'product', 'selected_categories']);
+const user = ref(usePage().props.auth.user);
+const role = ref(user.value.role.type);
 
 const form = useForm({
     name: props.product?.name ?? '',
@@ -49,7 +51,7 @@ const update = () => {
 
         <Card>
             <form @submit.prevent="(product == null ? store() : update())" class="space-y-6">
-                <div v-if="$page.props.auth.user.role.type === 'administrator'">
+                <div v-if="role === 'administrator' || role === 'director'">
                     <InputLabel for="name" value="Name" />
 
                     <TextInput id="name" type="text" class="mt-1 block w-full" v-model="form.name" required
@@ -57,7 +59,7 @@ const update = () => {
 
                     <InputError class="mt-2" :message="form.errors.name" />
                 </div>
-                <div v-if="$page.props.auth.user.role.type === 'administrator'">
+                <div v-if="role === 'administrator' || role === 'director'">
                     <InputLabel for="" value="Description" />
 
                     <TextInput v-model="form.description"
@@ -66,7 +68,7 @@ const update = () => {
 
                     <InputError class="mt-2" :message="form.errors.description" />
                 </div>
-                <div v-if="$page.props.auth.user.role.type === 'administrator'">
+                <div v-if="role === 'administrator' || role === 'director'">
                     <InputLabel for="name" value="Unit Price" />
 
                     <TextInput id="unitPrice" type="number" class="mt-1 block w-full"
@@ -75,7 +77,7 @@ const update = () => {
 
                     <InputError class="mt-2" :message="form.errors.unit_price" />
                 </div>
-                <div>
+                <div v-if="role !== 'director'">
                     <InputLabel for="name" value="Quantity" />
 
                     <TextInput id="unitPrice" type="number" class="mt-1 block w-full"
@@ -84,7 +86,7 @@ const update = () => {
 
                     <InputError class="mt-2" :message="form.errors.quantity" />
                 </div>
-                <div v-if="$page.props.auth.user.role.type === 'administrator'">
+                <div v-if="role === 'administrator' || role === 'director'">
                     <InputLabel for="category" value="Category" />
 
                     <select class="select h-24" v-model="form.categories" multiple>

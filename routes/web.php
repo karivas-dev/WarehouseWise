@@ -38,15 +38,16 @@ Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+
+    // Products
+    Route::resource('products', ProductController::class);
+    Route::delete('products/{product}/remove', [ProductController::class, 'remove'])->name('products.remove');
+    Route::post('products/{product}/addToOrder', [ProductController::class, 'addToOrder'])->name('products.add');
+    Route::put('products/{product}/restore', [ProductController::class, 'restore'])->name('products.restore')->withTrashed();
 });
 
-Route::resource('products', ProductController::class)->middleware(['auth']);
-Route::delete('products/{product}/remove', [ProductController::class, 'remove'])->middleware(['auth'])
-    ->can('remove', 'product')->name('products.remove');
 
 Route::resource('warehouses', WarehouseController::class)->middleware(['auth']);
-Route::delete('warehouses/{warehouse}/remove', [WarehouseController::class, 'remove'])->middleware(['auth'])
-    ->can('remove', 'warehouse')->name('warehouses.remove');
 
 Route::resource('users', UserController::class)->middleware(['auth']);
 

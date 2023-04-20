@@ -7,6 +7,7 @@ use App\Models\Category;
 use App\Models\Product;
 use Illuminate\Support\Facades\Auth;
 use Inertia\Inertia;
+use function Termwind\render;
 
 class ProductController extends Controller
 {
@@ -15,26 +16,51 @@ class ProductController extends Controller
         $this->authorizeResource(Product::class, 'product');
     }
 
+    protected function resourceAbilityMap(): array
+    {
+        return array_merge(parent::resourceAbilityMap(), [
+            'remove' => 'remove',
+            'restore' => 'restore',
+        ]);
+    }
+
     /**
      * Display a listing of the resource.
      */
     public function index()
     {
         $search = request("search");
+        $category = request("category");
+        $deleted = filter_var(request("deleted"), FILTER_VALIDATE_BOOLEAN);
 
-        $products = filter_var(request("all"), FILTER_VALIDATE_BOOLEAN) ? Product::query() : Auth::user()->warehouse->products();
-        $products = $products->when($search ?? false, function($query, $search){
+        if (filter_var(request("all"), FILTER_VALIDATE_BOOLEAN) || Auth::user()->role->type == 'director') {
+            $products = Product::query();
+        } else {
+            $products = Auth::user()->warehouse->products();
+        }
+
+        //$products = filter_var(request("all"), FILTER_VALIDATE_BOOLEAN) ? Product::query() : Auth::user()->warehouse->products();
+        $products = $products->when($search ?? false, function($query, $search) {
             $search = preg_replace("/([^A-Za-z0-9\s])+/i", "", $search);
             $query->where('name', 'LIKE', "%$search%");
+        })->when($category ?? false, function ($query, $category) {
+            if ($category != 'all') {
+                $query->whereRelation('categories', 'id', $category);
+            }
+        })->when($deleted ?? false, function ($query, $deleted) {
+            if ($deleted) {
+                $query->onlyTrashed();
+            }
         })->with('warehouses')->paginate(15)->withQueryString();
 
         return Inertia::render('Products/Index', [
             'links' => $products->toArray()['links'],
             'warehouse' => Auth::user()->warehouse,
+            'categories' => Category::all(),
             'products' => $products->map(function($product){
                 return $product->append('quantity');
             }),
-            'filters' => request()->only(['search', 'all']),
+            'filters' => request()->only(['search', 'all', 'category', 'deleted']),
         ]);
     }
 
@@ -57,7 +83,9 @@ class ProductController extends Controller
 
         $product->categories()->attach($request->validatedCategoriesId());
 
-        $product->warehouses()->attach(Auth::user()->warehouse->id, $request->validatedQuantity());
+        if (Auth::user()->role->type != 'director') {
+            $product->warehouses()->attach(Auth::user()->warehouse->id, $request->validatedQuantity());
+        }
 
         return to_route('products.show', $product->id)->with([
             'type' => 'floating',
@@ -72,9 +100,9 @@ class ProductController extends Controller
     public function show(Product $product)
     {
         return Inertia::render('Products/Show', [
-            'product' => $product->makeVisible('description')->append('quantity')->load('warehouses'),
-            'available' => $product->warehouses->where('id', Auth::user()->warehouse->id)->where('pivot.quantity', '>', 0)->first()!=null,
-            'warehouse_id' => Auth::user()->warehouse->id,
+            'product' => $product->makeVisible('description')->append('quantity')->load('warehouses', 'categories'),
+            'available' => Auth::user()->warehouse != null ? $product->warehouses->where('id', Auth::user()->warehouse->id)->where('pivot.quantity', '>', 0)->first()!=null : 0,
+            'warehouse_id' => Auth::user()->warehouse?->id,
         ]);
     }
 
@@ -117,7 +145,6 @@ class ProductController extends Controller
      */
     public function destroy(Product $product)
     {
-        $product->warehouses()->sync([]);
         $product->delete();
         return to_route('products.index')->with([
             'type' => 'floating',
@@ -137,5 +164,20 @@ class ProductController extends Controller
             'message' => 'Product removed from this warehouse',
             'level' => 'success'
         ]);
+    }
+
+    public function restore(Product $product)
+    {
+        $product->restore();
+        return back()->with([
+            'type' => 'floating',
+            'message' => 'Product restored successfully',
+            'level' => 'success'
+        ]);
+    }
+
+    public function addToOrder(Product $product)
+    {
+        return 'ADDED';
     }
 }

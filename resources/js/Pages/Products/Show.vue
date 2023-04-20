@@ -2,24 +2,31 @@
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout.vue";
 import Card from "@/Components/Card.vue";
 import PrimaryButton from "@/Components/PrimaryButton.vue";
-import {Head} from '@inertiajs/vue3';
+import {Head, usePage} from '@inertiajs/vue3';
 import {router} from "@inertiajs/vue3";
 import {Link} from "@inertiajs/vue3";
+import Modal from "@/Components/Modal.vue";
+import {ref} from "vue";
 
 const props = defineProps(['product', 'available', 'warehouse_id']);
+const showDestroyModal = ref(false);
+const showRemoveModal = ref(false);
+
+const user = ref(usePage().props.auth.user);
 
 const destroy = () => {
-    router.delete(route('products.destroy', {id: props.product.id}));
+    router.delete(route('products.destroy', {product: props.product.id}));
 }
 
 const remove = () => {
-    router.delete(route('products.remove', {id: props.product.id}), {
+    router.delete(route('products.remove', {product: props.product.id}), {
         preserveScroll: true,
         onSuccess: () => {
             router.reload({only: ['product']});
         }
     });
 }
+
 </script>
 <template>
     <Head title="Product detail"/>
@@ -37,13 +44,20 @@ const remove = () => {
                         <div class="mt-2 text-lg">
                             <span class="font-semibold">Unit price:</span> $ {{ product.unit_price }}
                             <br>
-                            <span
-                                class="font-semibold">{{
-                                    available ? 'Available quantity: ' + product.quantity : 'Not available'
-                                }}</span>
+                            <span class="font-semibold" v-if="user.role.type !== 'director'">
+                                {{ available ? 'Available quantity: ' + product.quantity : 'Not available' }}
+                            </span>
                             <br>
                         </div>
                         <div class="text-zinc-400 text-base mt-2 mr-8 max-w-3xl text-justify">
+                            <div class="mb-1.5">
+                                <span class="font-semibold text-sm">Categories: </span>
+                                <span class="text-sm" v-for="category in product.categories">
+                                    <Link as="button" :href="route('products.index', {category: category.id})" class="hover:underline">
+                                        {{ category.name }}
+                                    </Link>{{ category.id !== product.categories[product.categories.length - 1].id ? ', ' : '' }}
+                                </span>
+                            </div>
                             <span class="font-semibold">Description:</span> {{ product.description }}
                         </div>
                     </div>
@@ -52,14 +66,23 @@ const remove = () => {
                     <PrimaryButton :href="route('products.edit', { id: product.id })" class="w-full">
                         Edit product
                     </PrimaryButton>
-                    <PrimaryButton type="button" color="red" @click="destroy" class="mt-3 w-full"
-                                   v-if="$page.props.auth.user.role.type === 'administrator'">
-                        Delete product
+                    <PrimaryButton type="button" color="red" @click="showDestroyModal = true" class="mt-3 w-full"
+                                   v-if="user.role.type === 'director'">
+                        Disable product
                     </PrimaryButton>
-                    <PrimaryButton type="button" color="red" @click="remove" class="mt-3 w-full"
-                                   v-if="available && $page.props.auth.user.role.type === 'administrator'">
-                        Disassociate WW
+                    <Modal :show="showDestroyModal" @close="showDestroyModal = false" @trueResponse="destroy">
+                        Are you sure you want to disable this product?
+                        This action will not let Warehouses use their stock!
+                    </Modal>
+                    <PrimaryButton type="button" color="red" @click="showRemoveModal = true" class="mt-3 w-full"
+                                   v-if="user.role.type === 'administrator'">
+                        Disassociate
                     </PrimaryButton>
+                    <Modal :show="showRemoveModal" @close="showRemoveModal = false" @trueResponse="remove">
+                        Are you sure you want to disassociate this product from your warehouse?
+                        <br>
+                        This will erase all the stock available!
+                    </Modal>
                     <!-- Make a button for adding it to actual order -->
                 </div>
             </div>

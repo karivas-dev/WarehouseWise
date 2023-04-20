@@ -6,6 +6,7 @@ use App\Http\Requests\WarehouseRequest;
 use App\Models\User;
 use App\Models\Warehouse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Inertia\Inertia;
 
 class WarehouseController extends Controller
@@ -92,6 +93,15 @@ class WarehouseController extends Controller
     public function destroy(Warehouse $warehouse)
     {
         $warehouse->delete();
+
+        if ($warehouse->id == Auth::user()->warehouse->id) {
+            Auth::guard('web')->logout();
+            request()->session()->invalidate();
+            request()->session()->regenerateToken();
+
+            return redirect('/');
+        }
+
         return to_route('warehouses.index')->with([
             'type' => 'floating',
             'message' => 'Warehouse disable successfully',

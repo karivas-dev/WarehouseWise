@@ -20,7 +20,6 @@ class Product extends Model
     ];
 
     protected $hidden = [
-        'deleted_at',
         'description'
     ];
 
@@ -51,6 +50,8 @@ class Product extends Model
 
     public function getQuantityAttribute()
     {
-        return $this->warehouses->where('id', Auth::user()->warehouse->id)->first()?->pivot->quantity;
+        if (Auth::user()->warehouse != null) {
+            return $this->warehouses->where('id', Auth::user()->warehouse->id)->first()?->pivot->quantity;
+        }
     }
 }

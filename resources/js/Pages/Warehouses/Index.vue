@@ -9,11 +9,13 @@ import Table from "@/Components/Table.vue";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout.vue";
 import {ref, watch} from "vue";
 import {throttle} from "lodash";
+import Modal from "@/Components/Modal.vue";
 
 const props = defineProps(['warehouses', 'links', 'filters']);
 const search = ref(props.filters.search);
 
 const userWarehouse = ref(props.warehouses.find(warehouse => warehouse.id === usePage().props.auth.user.warehouse.id));
+const showDestroyModal = ref(false);
 
 watch(search, throttle(function (value) {
     router.get(route('warehouses.index'), {search: value}, {
@@ -22,6 +24,10 @@ watch(search, throttle(function (value) {
         preserveScroll: true,
     });
 }, 1000))
+
+const destroy = () => {
+    router.delete(route('warehouses.destroy', {warehouse: userWarehouse.value.id}));
+}
 
 </script>
 
@@ -40,7 +46,7 @@ watch(search, throttle(function (value) {
                     <div class="ml-12">
 
                         <span class="inline text-5xl h-fit">
-                            <Link :href="route('warehouses.show', { id: userWarehouse.id })" class="hover:underline">
+                            <Link :href="route('warehouses.show', { warehouse: userWarehouse.id })" class="hover:underline">
                                 {{ userWarehouse.name }}
                             </Link>
                         </span>
@@ -56,12 +62,16 @@ watch(search, throttle(function (value) {
                 </div>
 
                 <div class="flex flex-col justify-center items-center">
-                    <PrimaryButton :href="route('warehouses.edit', { id: userWarehouse.id })" class="w-full">
+                    <PrimaryButton :href="route('warehouses.edit', { warehouse: userWarehouse.id })" class="w-full">
                         Edit warehouse
                     </PrimaryButton>
-                    <PrimaryButton :href="route('warehouses.destroy', { id: userWarehouse.id })" class="mt-3 w-full">
+                    <PrimaryButton  class="mt-3 w-full" color="red" @click="showDestroyModal = true">
                         Disable warehouse
                     </PrimaryButton>
+                    <Modal :show="showDestroyModal" @close="showDestroyModal = false" @trueResponse="destroy">
+                        Are you sure you want to disable this warehouse?
+                        As is your same warehouse you will be logged out
+                    </Modal>
                 </div>
             </div>
         </Card>
@@ -118,7 +128,7 @@ watch(search, throttle(function (value) {
                             </td>
 
                             <td class="px-6 py-4 text-right">
-                                <Link :href="route('warehouses.edit', { id: warehouse.id })"
+                                <Link :href="route('warehouses.edit', { warehouse: warehouse.id })"
                                       class="text-pinkC-100 hover:text-pinkC-400 hover:font-semibold hover:underline">
                                     Edit
                                 </Link>
