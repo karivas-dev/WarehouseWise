@@ -11,21 +11,39 @@ use Inertia\Inertia;
 
 class WarehouseController extends Controller
 {
+    public function __construct()
+    {
+        $this->authorizeResource(Warehouse::class, 'warehouse');
+    }
+
+    protected function resourceAbilityMap(): array
+    {
+        return array_merge(parent::resourceAbilityMap(), [
+            'restore' => 'restore',
+        ]);
+    }
+
     /**
      * Display a listing of the resource.
      */
     public function index()
     {
         $search = request("search");
+        $deleted = filter_var(request("deleted"), FILTER_VALIDATE_BOOLEAN);
+
         $warehouses = Warehouse::query()->when($search ?? false, function ($query, $search) {
             $search = preg_replace("/([^A-Za-z0-9\s])+/i", "", $search);
             $query->where('name', 'LIKE', "%$search%");
+        })->when($deleted ?? false, function ($query, $deleted) {
+            if ($deleted) {
+                $query->onlyTrashed();
+            }
         })->paginate(15)->withQueryString();
 
         return Inertia::render('Warehouses/Index', [
             'warehouses' => $warehouses->toArray()['data'],
             'links' => $warehouses->toArray()['links'],
-            'filters' => request()->only(['search']),
+            'filters' => request()->only(['search', 'deleted']),
         ]);
     }
 
@@ -94,7 +112,7 @@ class WarehouseController extends Controller
     {
         $warehouse->delete();
 
-        if ($warehouse->id == Auth::user()->warehouse->id) {
+        if ($warehouse->id == Auth::user()->warehouse?->id) {
             Auth::guard('web')->logout();
             request()->session()->invalidate();
             request()->session()->regenerateToken();
@@ -104,7 +122,17 @@ class WarehouseController extends Controller
 
         return to_route('warehouses.index')->with([
             'type' => 'floating',
-            'message' => 'Warehouse disable successfully',
+            'message' => 'Warehouse disabled successfully',
+            'level' => 'success'
+        ]);
+    }
+
+    public function restore(Warehouse $warehouse)
+    {
+        $warehouse->restore();
+        return back()->with([
+            'type' => 'floating',
+            'message' => 'Warehouse restored successfully',
             'level' => 'success'
         ]);
     }

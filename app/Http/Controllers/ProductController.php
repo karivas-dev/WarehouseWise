@@ -101,7 +101,6 @@ class ProductController extends Controller
     {
         return Inertia::render('Products/Show', [
             'product' => $product->makeVisible('description')->append('quantity')->load('warehouses', 'categories'),
-            'available' => Auth::user()->warehouse != null ? $product->warehouses->where('id', Auth::user()->warehouse->id)->where('pivot.quantity', '>', 0)->first()!=null : 0,
             'warehouse_id' => Auth::user()->warehouse?->id,
         ]);
     }

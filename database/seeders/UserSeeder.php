@@ -21,18 +21,21 @@ class UserSeeder extends Seeder
         User::factory($warehouses->count())->sequence(fn ($sequence) => [ 'warehouse_id' => $warehouses[$sequence->index]->id ])->create();
 
         User::factory()->create([
+            'name' => 'Director',
             'email' => 'director@example.com',
             'warehouse_id' => null,
             'role_id' => 1,
         ]);
 
         User::factory()->create([
+            'name' => 'Admin',
             'email' => 'admin@example.com',
             'warehouse_id' => $warehouses[0]->id,
             'role_id' => 2,
         ]);
 
         User::factory()->create([
+            'name' => 'Employee',
             'email' => 'employee@example.com',
             'warehouse_id' => $warehouses[0]->id,
             'role_id' => 3,

@@ -8,7 +8,7 @@ import {Link} from "@inertiajs/vue3";
 import Modal from "@/Components/Modal.vue";
 import {ref} from "vue";
 
-const props = defineProps(['product', 'available', 'warehouse_id']);
+const props = defineProps(['product', 'warehouse_id']);
 const showDestroyModal = ref(false);
 const showRemoveModal = ref(false);
 
@@ -45,7 +45,7 @@ const remove = () => {
                             <span class="font-semibold">Unit price:</span> $ {{ product.unit_price }}
                             <br>
                             <span class="font-semibold" v-if="user.role.type !== 'director'">
-                                {{ available ? 'Available quantity: ' + product.quantity : 'Not available' }}
+                                {{ product.quantity != null ? 'Available quantity: ' + product.quantity : 'Not available' }}
                             </span>
                             <br>
                         </div>

@@ -44,10 +44,13 @@ Route::middleware('auth')->group(function () {
     Route::delete('products/{product}/remove', [ProductController::class, 'remove'])->name('products.remove');
     Route::post('products/{product}/addToOrder', [ProductController::class, 'addToOrder'])->name('products.add');
     Route::put('products/{product}/restore', [ProductController::class, 'restore'])->name('products.restore')->withTrashed();
+
+    //Warehouses
+    Route::resource('warehouses', WarehouseController::class)->middleware(['auth']);
+    Route::put('warehouses/{warehouse}/restore', [WarehouseController::class, 'restore'])->name('warehouses.restore')->withTrashed();
 });
 
 
-Route::resource('warehouses', WarehouseController::class)->middleware(['auth']);
 
 Route::resource('users', UserController::class)->middleware(['auth']);
 

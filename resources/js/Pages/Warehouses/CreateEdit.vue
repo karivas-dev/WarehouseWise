@@ -48,7 +48,7 @@ const update = () => {
 
         <Card>
             <form @submit.prevent="(warehouse == null ? store() : update())" class="space-y-6">
-                <div v-if="$page.props.auth.user.role.type === 'administrator'">
+                <div>
                     <InputLabel for="name" value="Name" />
 
                     <TextInput id="name" type="text" class="mt-1 block w-full" v-model="form.name" required
@@ -56,7 +56,7 @@ const update = () => {
 
                     <InputError class="mt-2" :message="form.errors.name" />
                 </div>
-                <div v-if="$page.props.auth.user.role.type === 'administrator'">
+                <div>
                     <InputLabel for="" value="Location" />
 
                     <TextInput v-model="form.location"
@@ -66,7 +66,7 @@ const update = () => {
                     <InputError class="mt-2" :message="form.errors.location" />
                 </div>
 
-                <div v-if="$page.props.auth.user.role.type === 'administrator'">
+                <div>
                     <InputLabel for="phone" value="Phone" />
 
                     <TextInput id="phone" type="tel" class="mt-1 block w-full"
