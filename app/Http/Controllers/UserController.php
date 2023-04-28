@@ -24,7 +24,13 @@ class UserController extends Controller
     {
         $search = request('search');
 
-        $users = filter_var(request("all"), FILTER_VALIDATE_BOOLEAN) ? User::query() : Auth::user()->warehouse->users();
+        if (filter_var(request("all"), FILTER_VALIDATE_BOOLEAN) || Auth::user()->role->type == 'director') {
+            $users = User::query();
+        } else {
+            $users = Auth::user()->warehouse->users();
+        }
+
+        //$users = filter_var(request("all"), FILTER_VALIDATE_BOOLEAN) ? User::query() : Auth::user()->warehouse->users();
         $users = $users->when($search ?? false, function($query, $search){
             $search = preg_replace("/([^A-Za-z0-9\s])+/i", "", $search);
             $query->where('name', 'LIKE', "%$search%");

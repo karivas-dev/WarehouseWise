@@ -6,8 +6,10 @@ import InputLabel from "@/Components/InputLabel.vue";
 import InputError from "@/Components/InputError.vue";
 import {useForm, usePage} from "@inertiajs/vue3";
 import PrimaryButton from "@/Components/PrimaryButton.vue";
+import {ref} from "vue";
 
 const props = defineProps(['user', 'warehouses', 'roles']);
+const loggedUser = ref(usePage().props.auth.user);
 
 const form = useForm({
     name: props.user?.name,
@@ -16,6 +18,10 @@ const form = useForm({
     role_id: props.user?.role_id ?? props.roles[0].id,
     warehouse_id: props.user?.warehouse_id ?? props.warehouses[0].id,
 });
+
+if (loggedUser.value.role.type === 'administrator') {
+    form.warehouse_id = loggedUser.value.warehouse.id;
+}
 
 const store = () => {
     form.post(route('users.store'))
@@ -54,7 +60,7 @@ const update = ()=> {
                     <InputError class="mt-2" :message="form.errors.password" />
                 </div>
 
-                <div class="mt-4">
+                <div class="mt-4" v-if="loggedUser.role.type !== 'administrator'">
                     <InputLabel for="category" value="Warehouse" />
 
                     <select class="select" v-model="form.warehouse_id">
@@ -66,7 +72,9 @@ const update = ()=> {
                     <InputLabel for="category" value="Role" />
 
                     <select class="select capitalize" v-model="form.role_id">
-                        <option v-for="role in roles" :key="role.id" :value="role.id" class="capitalize">{{ role.type }}</option>
+                        <template v-for="role in roles" :key="role.id">
+                            <option :value="role.id" class="capitalize" v-if="(loggedUser.role.type === 'director' || role.type !== 'director')">{{ role.type }}</option>
+                        </template>
                     </select>
                 </div>
 

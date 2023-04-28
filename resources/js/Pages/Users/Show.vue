@@ -2,10 +2,12 @@
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout.vue";
 import PrimaryButton from "@/Components/PrimaryButton.vue";
 import Card from "@/Components/Card.vue";
-import {Link, router} from "@inertiajs/vue3";
+import {Link, router, usePage} from "@inertiajs/vue3";
 import { Head } from '@inertiajs/vue3';
+import {ref} from "vue";
 
 const props = defineProps(['user']);
+const loggedUser = ref(usePage().props.auth.user);
 
 const destroy = () => {
     router.delete(route('users.destroy', { id: props.product.id }));
@@ -35,10 +37,10 @@ const destroy = () => {
                     </div>
                 </div>
                 <div class="flex flex-col justify-center items-center">
-                    <PrimaryButton :href="route('users.edit', { id: user.id })" class="w-full">
+                    <PrimaryButton :href="route('users.edit', { id: user.id })" class="w-full" v-if="(user.warehouse_id === loggedUser.warehouse?.id || loggedUser.role.type === 'director')">
                         Edit user
                     </PrimaryButton>
-                    <PrimaryButton color="red" @click="destroy" class="mt-3 w-full">
+                    <PrimaryButton color="red" @click="destroy" class="mt-3 w-full" v-if="(user.warehouse_id === loggedUser.warehouse?.id || loggedUser.role.type === 'director')">
                         Delete user
                     </PrimaryButton>
                 </div>

@@ -2,7 +2,7 @@
 import Paginator from "@/Components/Paginator.vue";
 import {ref, watch} from "vue";
 import {throttle} from "lodash";
-import {Link, router} from "@inertiajs/vue3";
+import {Link, router, usePage} from "@inertiajs/vue3";
 import Table from "@/Components/Table.vue";
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import InputSearch from "@/Components/InputSearch.vue";
@@ -12,6 +12,7 @@ import { Head } from '@inertiajs/vue3';
 const props = defineProps(['users', 'links', 'filters']);
 const search = ref(props.filters.search);
 const all = ref(props.filters.all === "1");
+const loggedUser = ref(usePage().props.auth.user);
 
 watch(search, throttle(function (value) {
     router.get(route('users.index'), { search: value, all: all.value }, {
@@ -33,7 +34,7 @@ watch(search, throttle(function (value) {
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 py-6">
             <div class="overflow-hidden shadow-sm rounded-lg px-6 bg-grayC-400">
                 <div class="w-100 my-8 flex justify-between">
-                    <PrimaryButton :href="route('users.index', { search: search, all: !all })">
+                    <PrimaryButton :href="route('users.index', { search: search, all: !all })" v-if="loggedUser.role.type === 'administrator'">
                         {{ all ? "Show local users" : "Show all users" }}
                     </PrimaryButton>
 
@@ -80,11 +81,16 @@ watch(search, throttle(function (value) {
                                 {{ user.role.type }}
                             </td>
                             <td class="px-6 py-4 capitalize">
-                                {{ user.warehouse.name }}
+                                <span v-if="user.warehouse != null">
+                                    {{ user.warehouse.name }}
+                                </span>
+                                <span v-else>---</span>
                             </td>
                             <td class="px-6 py-4 text-right">
-                                <Link :href="route('users.edit', { id: user.id })"
-                                      class="text-pinkC-100 hover:text-pinkC-400 hover:font-semibold hover:underline">Edit</Link>
+                                <Link :href="route('users.edit', { id: user.id })" v-if="(user.warehouse_id === loggedUser.warehouse?.id || loggedUser.role.type === 'director')"
+                                      class="text-pinkC-100 hover:text-pinkC-400 hover:font-semibold hover:underline">
+                                    Edit
+                                </Link>
                             </td>
                         </tr>
                     </Table>

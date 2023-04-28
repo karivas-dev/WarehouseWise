@@ -32,7 +32,7 @@ const destroy = () => {
                     <PrimaryButton :href="route('categories.edit', { id: category.id })" class="w-full">
                         Edit category
                     </PrimaryButton>
-                    <PrimaryButton color="red" @click="destroy" method="destroy" class="mt-3 w-full">
+                    <PrimaryButton color="red" @click="destroy" method="destroy" class="mt-3 w-full" v-if="$page.props.auth.user.role.type === 'director'">
                         Disable category
                     </PrimaryButton>
                 </div>
