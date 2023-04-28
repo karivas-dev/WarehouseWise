@@ -10,7 +10,7 @@ const props = defineProps(['user']);
 const loggedUser = ref(usePage().props.auth.user);
 
 const destroy = () => {
-    router.delete(route('users.destroy', { id: props.product.id }));
+    router.delete(route('users.destroy', { id: props.user.id }));
 }
 </script>
 
