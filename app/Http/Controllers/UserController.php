@@ -23,6 +23,7 @@ class UserController extends Controller
     public function index()
     {
         $search = request('search');
+        $deleted = filter_var(request("deleted"), FILTER_VALIDATE_BOOLEAN);
 
         if (filter_var(request("all"), FILTER_VALIDATE_BOOLEAN) || Auth::user()->role->type == 'director') {
             $users = User::query();
@@ -30,16 +31,19 @@ class UserController extends Controller
             $users = Auth::user()->warehouse->users();
         }
 
-        //$users = filter_var(request("all"), FILTER_VALIDATE_BOOLEAN) ? User::query() : Auth::user()->warehouse->users();
         $users = $users->when($search ?? false, function($query, $search){
             $search = preg_replace("/([^A-Za-z0-9\s])+/i", "", $search);
             $query->where('name', 'LIKE', "%$search%");
+        })->when($deleted ?? false, function ($query, $deleted) {
+            if ($deleted) {
+                $query->onlyTrashed();
+            }
         })->with('warehouse', 'role')->paginate(15)->withQueryString();
 
         return Inertia::render('Users/Index', [
             'links' => $users->toArray()['links'],
             'users' => $users->toArray()['data'],
-            'filters' => request()->only(['search', 'all']),
+            'filters' => request()->only(['search', 'all', 'deleted']),
         ]);
     }
 

@@ -12,6 +12,7 @@ import { Head } from '@inertiajs/vue3';
 const props = defineProps(['users', 'links', 'filters']);
 const search = ref(props.filters.search);
 const all = ref(props.filters.all === "1");
+const deleted = ref(props.filters.deleted === "1");
 const loggedUser = ref(usePage().props.auth.user);
 
 watch(search, throttle(function (value) {
@@ -28,7 +29,13 @@ watch(search, throttle(function (value) {
 
     <AuthenticatedLayout>
         <template #header>
-            <h2 class="font-semibold text-xl leading-tight">Users Table</h2>
+            <div class="w-100 flex justify-between">
+                <h2 class="font-semibold text-xl leading-tight">Users table</h2>
+                <PrimaryButton :href="route('users.index', { search: search, all: all, deleted: !deleted })" color="neutral"
+                               v-if="loggedUser.role.type === 'director' || loggedUser.role.type === 'administrator'">
+                    {{ !deleted ? 'Show disabled users' : 'Show normal users' }}
+                </PrimaryButton>
+            </div>
         </template>
 
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 py-6">
