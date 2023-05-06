@@ -8,6 +8,8 @@ import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import { Head } from '@inertiajs/vue3';
 import InputSearch from "@/Components/InputSearch.vue";
 import PrimaryButton from "@/Components/PrimaryButton.vue";
+import Modal from "@/Components/Modal.vue";
+import TextInput from "@/Components/TextInput.vue";
 
 const props = defineProps(['products', 'warehouse', 'categories', 'filters', 'links']);
 const search = ref(props.filters.search ?? "");
@@ -16,6 +18,24 @@ const category = ref(props.filters.category ?? 'all');
 const deleted = ref(props.filters.deleted === "1");
 
 const user = ref(usePage().props.auth.user);
+
+const addingToOrder = ref(false);
+const modalProduct = ref(null);
+const modalMaxQuantity = ref(1);
+const quantity = ref(1);
+const showModal = (productName, maxQuantity) => {
+    modalProduct.value = productName;
+    modalMaxQuantity.value = maxQuantity;
+    quantity.value = 1;
+    addingToOrder.value = true;
+}
+
+const add = () => {
+    router.post(route('products.order.add', { product: modalProduct.value.id}), {
+        quantity: quantity.value,
+    });
+    addingToOrder.value = false;
+}
 
 watch([search, category], throttle(function () {
     router.get('/products', { search: search.value, all: all.value, category: category.value, deleted: deleted.value }, {
@@ -100,11 +120,10 @@ watch([search, category], throttle(function () {
                                 $ {{ product.unit_price }}
                             </td>
                             <td class="px-6 py-4 text-right" v-if="user.role.type !== 'administrator' && user.role.type !== 'director'">
-                                <Link :href="route('products.add', { id: product.id })"
-                                      class="text-pinkC-100 hover:text-pinkC-400 hover:font-semibold hover:underline"
-                                      :method="'post'" as="button">
+                                <span @click="showModal(product, product.quantity)" v-if="product.quantity != null"
+                                      class="text-pinkC-100 hover:text-pinkC-400 hover:font-semibold hover:underline">
                                     {{ 'Add to order' }}
-                                </Link>
+                                </span>
                             </td>
                             <td class="px-6 py-4 text-right" v-if="user.role.type === 'director' && product.deleted_at !== null">
                                 <Link :href="route('products.restore', { id: product.id })"
@@ -117,6 +136,15 @@ watch([search, category], throttle(function () {
                     </Table>
                 </div>
 
+                <Modal :show="addingToOrder" @close="addingToOrder = false" @trueResponse="add">
+                    <span class="text-2xl text-white">
+                        {{ modalProduct?.name }}
+                    </span>
+                    <br>
+                    How much do you want to add to the order?
+                    <br>
+                    <TextInput type="number" v-model="quantity" min="1" :max="modalMaxQuantity" class="mt-5 mb-2"/>
+                </Modal>
                 <Paginator :links="links"/>
         </div>
     </div>
