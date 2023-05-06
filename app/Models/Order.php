@@ -9,6 +9,15 @@ class Order extends Model
 {
     use HasFactory;
 
+    protected $guarded = [
+        'id',
+    ];
+
+    protected $casts = [
+        'finished' => 'bool',
+        'canceled' => 'bool',
+    ];
+
     public function user()
     {
         return $this->belongsTo(User::class);

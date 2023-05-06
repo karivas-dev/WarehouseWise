@@ -21,6 +21,8 @@ return new class extends Migration
             $table->double('shipping_cost');
             $table->double('taxes');
             $table->double('total');
+            $table->boolean('finished');
+            $table->boolean('canceled');
             $table->timestamps();
         });
     }

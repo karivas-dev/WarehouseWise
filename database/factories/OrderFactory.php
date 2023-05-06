@@ -27,6 +27,8 @@ class OrderFactory extends Factory
             'shipping_cost' => $shipping,
             'taxes' => $taxes,
             'total' => $subTotal + $shipping + $taxes,
+            'finished' => true,
+            'canceled' => false,
         ];
     }
 }

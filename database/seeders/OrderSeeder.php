@@ -28,6 +28,7 @@ class OrderSeeder extends Seeder
                 $item->save();
             }
 
+            $order->user_id = 8;
             $order->item_count = $item_count;
             $order->sub_total = $sub_total;
             $order->taxes = round($sub_total * 0.10, 2);
