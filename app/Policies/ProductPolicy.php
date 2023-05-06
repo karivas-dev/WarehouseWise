@@ -77,4 +77,9 @@ class ProductPolicy
     {
         return $user->role->type == 'administrator';
     }
+
+    public function order(User $user): bool
+    {
+        return true;
+    }
 }
