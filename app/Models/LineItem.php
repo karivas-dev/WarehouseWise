@@ -11,6 +11,10 @@ class LineItem extends Model
 
     public $timestamps = false;
 
+    protected $guarded = [
+        'id',
+    ];
+
     public function order()
     {
         return $this->belongsTo(Order::class);
@@ -18,6 +22,22 @@ class LineItem extends Model
 
     public function product()
     {
-        return $this->belongsTo(Product::class);
+        return $this->belongsTo(Product::class)->withTrashed();
+    }
+
+    public function setQuantityAttribute($quantity)
+    {
+        $this->attributes['quantity'] = $quantity;
+        if ($this->unit_price != null) {
+            $this->item_total = $this->quantity * $this->unit_price;
+        }
+    }
+
+    public function setUnitPriceAttribute($price)
+    {
+        $this->attributes['unit_price'] = $price;
+        if ($this->quantity != null) {
+            $this->item_total = $this->quantity * $this->unit_price;
+        }
     }
 }
