@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\ProductRequest;
 use App\Models\Category;
+use App\Models\LineItem;
+use App\Models\Order;
 use App\Models\Product;
 use Illuminate\Support\Facades\Auth;
 use Inertia\Inertia;
@@ -19,8 +21,20 @@ class ProductController extends Controller
     protected function resourceAbilityMap(): array
     {
         return array_merge(parent::resourceAbilityMap(), [
+            // method in Controller => method in Policy
             'remove' => 'remove',
             'restore' => 'restore',
+            'addToOrder' => 'order',
+            'removeFromOrder' => 'order',
+        ]);
+    }
+
+    protected function resourceMethodsWithoutModels(): array
+    {
+        return array_merge(parent::resourceMethodsWithoutModels(), [
+            // method in Controller
+            'addToOrder',
+            'removeFromOrder',
         ]);
     }
 
@@ -177,6 +191,97 @@ class ProductController extends Controller
 
     public function addToOrder(Product $product)
     {
-        return 'ADDED';
+        $quantity = request('quantity');
+        if ($product->quantity < $quantity) {
+            return back()->with([
+                'type' => 'floating',
+                'message' => 'Not enough quantity available',
+                'level' => 'warning'
+            ]);
+        }
+        $product->warehouses()->sync([Auth::user()->warehouse->id => [
+            'quantity' => $product->quantity - $quantity,
+        ]]);
+
+        if (Auth::user()->role->type == 'employee') {
+            $order = Auth::user()->orders()->latest()->first();
+            if ($order == null || $order->finished) {
+                $order = Order::create([
+                    'user_id' => Auth::user()->id,
+                    'item_count' => 0,
+                    'sub_total' => 0,
+                    'shipping_cost' => 0,
+                    'taxes'  => 0,
+                    'total' => 0,
+                    'canceled' => 0,
+                    'finished' => false,
+                ]);
+            }
+        } else {
+            $order = Order::where('id', request('orderID'))->first();
+        }
+
+
+        $item = LineItem::firstOrNew(['order_id' => $order->id, 'product_id' => $product->id]);
+        $item->quantity += $quantity;
+        $item->unit_price = $product->unit_price;
+        $item->save();
+
+        $order->item_count += $quantity;
+        $order->save();
+
+        return back()->with([
+            'type' => 'floating',
+            'message' => 'Product added to order successfully',
+            'level' => 'success'
+        ]);
+    }
+
+    public function removeFromOrder(Product $product)
+    {
+        if (Auth::user()->role->type == 'employee') {
+            $order = Auth::user()->orders()->latest()->first();
+            if ($order == null || $order->finished) {
+                return back()->with([
+                    'type' => 'floating',
+                    'message' => 'No order available',
+                    'level' => 'warning'
+                ]);
+            }
+        } else {
+            $order = Order::where('id', request('orderID'))->first();
+        }
+
+        $quantity = request('quantity');
+        $item = LineItem::where('order_id', $order->id)->where('product_id', $product->id)->first();
+
+        if($item == null) {
+            return back()->with([
+                'type' => 'floating',
+                'message' => 'Product on order does not exists',
+                'level' => 'warning'
+            ]);
+        }
+
+        if ($quantity >= $item->quantity) {
+            $quantity = $item->quantity;
+            $item->delete();
+        } else {
+            $item->quantity -= $quantity;
+            $item->save();
+        }
+
+        $product->warehouses()->sync([Auth::user()->warehouse->id => [
+            'quantity' => $product->quantity + $quantity,
+        ]]);
+
+        $order->item_count -= $quantity;
+        $order->save();
+
+        return back()->with([
+            'type' => 'floating',
+            'message' => $item->exists ? 'Quantity removed from the order successfully' : 'Product removed from order successfully',
+            'level' => 'success'
+        ]);
     }
 }
