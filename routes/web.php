@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\CategoryController;
+use App\Http\Controllers\OrderController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\UserController;
@@ -31,8 +32,8 @@ Route::get('/', function () {
 });
 
 Route::get('/dashboard', function () {
-    return Inertia::render('Dashboard');
-})->middleware(['auth', 'verified'])->name('dashboard');
+    return redirect('products');
+})->middleware(['auth'])->name('dashboard');
 
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
@@ -42,18 +43,24 @@ Route::middleware('auth')->group(function () {
     // Products
     Route::resource('products', ProductController::class);
     Route::delete('products/{product}/remove', [ProductController::class, 'remove'])->name('products.remove');
-    Route::post('products/{product}/addToOrder', [ProductController::class, 'addToOrder'])->name('products.add');
+    Route::post('products/{product}/addToOrder', [ProductController::class, 'addToOrder'])->name('products.order.add');
+    Route::post('products/{product}/removeFromOrder', [ProductController::class, 'removeFromOrder'])->name('products.order.remove');
     Route::put('products/{product}/restore', [ProductController::class, 'restore'])->name('products.restore')->withTrashed();
 
     //Warehouses
-    Route::resource('warehouses', WarehouseController::class)->middleware(['auth']);
+    Route::resource('warehouses', WarehouseController::class);
     Route::put('warehouses/{warehouse}/restore', [WarehouseController::class, 'restore'])->name('warehouses.restore')->withTrashed();
+
+    //Users
+    Route::resource('users', UserController::class);
+
+    //Categories
+    Route::resource('categories', CategoryController::class);
+
+    //Orders
+    Route::resource('orders', OrderController::class);
+    Route::post('orders/{order}/finish', [OrderController::class, 'finishOrder'])->name('orders.finish');
+    Route::delete('orders/{order}/cancel', [OrderController::class, 'cancelOrder'])->name('orders.cancel');
 });
-
-
-
-Route::resource('users', UserController::class)->middleware(['auth']);
-
-Route::resource('categories', CategoryController::class)->middleware(['auth']);
 
 require __DIR__.'/auth.php';
