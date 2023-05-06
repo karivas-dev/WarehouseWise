@@ -1,7 +1,7 @@
 <script setup>
 import { onMounted, ref } from 'vue';
 
-defineProps(['modelValue']);
+defineProps(['modelValue', 'type']);
 
 defineEmits(['update:modelValue']);
 
@@ -29,7 +29,7 @@ defineExpose({ focus: () => input.value.focus() });
         </div>
         <input :value="modelValue" ref="input"
             @input="$emit('update:modelValue', $event.target.value)"
-            type="text"
+            :type="type ?? 'text'"
             id="simple-search"
             class="border border-gray-300 text-sm rounded-full focus:ring-pinkC-400
                 focus:border-pinkC-400 block w-full pl-10 p-2.5 text-black"
